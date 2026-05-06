@@ -45,7 +45,7 @@ const SYSTEM_PROMPT = `Ты — ведущий эксперт по юридич�
 
 Если предоставлен текст документов — анализируй их. Если только URL — используй свои знания о сайте и типичные нарушения таких сервисов. Будь конкретным и детальным.`;
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res)  {
   // Разрешаем запросы только методом POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
