@@ -76,7 +76,7 @@ ${extra}
 
 JSON: {"site_name":"...","url":"...","audit_date":"DD.MM.YYYY","industry":"...","compliance_score":45,"overall_risk":"высокий|средний|низкий","summary":"2-3 предложения","total_risks":12,"critical_count":5,"warning_count":5,"info_count":2,"max_fine":"до X руб.","min_fine":"от X руб.","block_risk":1,"license_risk":0,"blocks":[{"code":"A","name":"Персональные данные","count":3,"level":"critical"},{"code":"B","name":"Реклама / ERID","count":2,"level":"warning"},{"code":"C","name":"Защита потребителей","count":2,"level":"warning"},{"code":"F","name":"Лицензирование","count":1,"level":"critical"},{"code":"H","name":"E-commerce / Оферта","count":2,"level":"warning"},{"code":"M","name":"Технические требования","count":1,"level":"info"},{"code":"G","name":"Налоги / Финансы","count":1,"level":"info"}],"risks":[{"id":"PD-001","category_code":"A","category":"A — Персональные данные","name":"...","description":"...","norm":"...","fine_label":"...","fine_max":700000,"probability":3,"impact":3,"score":9,"priority":"critical","action":"...","responsible":"ИТ+ЮР","deadline":"7 дней","deadline_days":7,"block_risk":false,"license_risk":false,"status":"Новый"}],"quick_wins":[{"id":"TXT-001","name":"...","time":"5 мин","responsible":"Разработчик"}]}
 
-ПРАВИЛА: вероятность(1-3) × влияние(1-3) = балл. 7-9=critical, 3-6=warning, 1-2=info. Выяви 10-14 рисков релевантных для данной отрасли. 3-5 быстрых побед.`;
+ПРАВИЛА: вероятность(1-3) × влияние(1-3) = балл. 7-9=critical, 3-6=warning, 1-2=info. Выяви 8-10 рисков (самые важные). 3 быстрые победы. Описания кратко.`;
 }
 
 var STATUS_MSGS = {
@@ -129,7 +129,7 @@ module.exports = async function handler(req, res) {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 8000,
         stream: true,
         system: buildSystemPrompt(industry),
