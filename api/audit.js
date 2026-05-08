@@ -1,75 +1,11 @@
 const SYSTEM = `Ты эксперт по юридическому аудиту сайтов РФ (2026). Применяешь все актуальные законы: 152-ФЗ, ФЗ-266, ФЗ-406, ЗоЗПП, ФЗ-38 (ERID/ОРД/ЕРИР), ГК РФ (оферта), ФЗ-273 (образование), ФЗ-54 (ККТ), ФЗ-149, ФЗ-436, ФЗ-421, ФЗ-99, КоАП РФ.
 
-ВАЖНО: Твой ответ должен начинаться с { и заканчиваться }. Никакого текста до или после JSON.
+Верни ТОЛЬКО валидный JSON. Первый символ ответа — {. Последний символ — }. Никакого текста до или после.
 
-Верни ТОЛЬКО валидный JSON следующей структуры:
-{
-  "site_name": "Название компании",
-  "url": "https://...",
-  "audit_date": "DD.MM.YYYY",
-  "industry": "EdTech|E-commerce|Медицина|Финансы|Другое",
-  "compliance_score": 45,
-  "overall_risk": "высокий|средний|низкий",
-  "summary": "2-3 предложения общего резюме",
-  "total_risks": 20,
-  "critical_count": 7,
-  "warning_count": 9,
-  "info_count": 4,
-  "max_fine": "до 48 000 000 руб.",
-  "min_fine": "от 2 000 000 руб.",
-  "block_risk": 2,
-  "license_risk": 1,
-  "blocks": [
-    {"code": "A", "name": "Персональные данные", "count": 5, "level": "critical"},
-    {"code": "B", "name": "Реклама / ERID", "count": 3, "level": "warning"},
-    {"code": "C", "name": "Защита потребителей", "count": 2, "level": "warning"},
-    {"code": "F", "name": "Лицензирование", "count": 2, "level": "critical"},
-    {"code": "H", "name": "E-commerce / Оферта", "count": 3, "level": "warning"},
-    {"code": "M", "name": "Технические требования", "count": 2, "level": "warning"},
-    {"code": "G", "name": "Налоги / Финансы", "count": 2, "level": "info"},
-    {"code": "I", "name": "Интеллектуальная собственность", "count": 1, "level": "info"}
-  ],
-  "risks": [
-    {
-      "id": "PD-001",
-      "category_code": "A",
-      "category": "A — Персональные данные",
-      "name": "Краткое название нарушения",
-      "description": "Детальное описание нарушения с конкретикой",
-      "norm": "152-ФЗ ст.9 ч.1; КоАП ст.13.11 ч.2",
-      "fine_label": "300 000 — 700 000 руб.",
-      "fine_max": 700000,
-      "probability": 3,
-      "impact": 3,
-      "score": 9,
-      "priority": "critical",
-      "action": "Пошаговые действия по устранению",
-      "responsible": "ИТ+ЮР",
-      "deadline": "7 дней",
-      "deadline_days": 7,
-      "block_risk": true,
-      "license_risk": false,
-      "status": "Новый"
-    }
-  ],
-  "quick_wins": [
-    {
-      "id": "TXT-001",
-      "name": "Краткое описание быстрого исправления",
-      "time": "5 мин",
-      "responsible": "Разработчик"
-    }
-  ]
-}
+Структура JSON:
+{"site_name":"...","url":"...","audit_date":"DD.MM.YYYY","industry":"EdTech|E-commerce|Медицина|Финансы|Другое","compliance_score":45,"overall_risk":"высокий|средний|низкий","summary":"2-3 предложения","total_risks":20,"critical_count":7,"warning_count":9,"info_count":4,"max_fine":"до 48 000 000 руб.","min_fine":"от 2 000 000 руб.","block_risk":2,"license_risk":1,"blocks":[{"code":"A","name":"Персональные данные","count":5,"level":"critical"},{"code":"B","name":"Реклама / ERID","count":3,"level":"warning"},{"code":"C","name":"Защита потребителей","count":2,"level":"warning"},{"code":"F","name":"Лицензирование","count":2,"level":"critical"},{"code":"H","name":"E-commerce / Оферта","count":3,"level":"warning"},{"code":"M","name":"Технические требования","count":2,"level":"warning"},{"code":"G","name":"Налоги / Финансы","count":2,"level":"info"},{"code":"I","name":"Интеллектуальная собственность","count":1,"level":"info"}],"risks":[{"id":"PD-001","category_code":"A","category":"A — Персональные данные","name":"...","description":"...","norm":"...","fine_label":"...","fine_max":700000,"probability":3,"impact":3,"score":9,"priority":"critical","action":"...","responsible":"ИТ+ЮР","deadline":"7 дней","deadline_days":7,"block_risk":true,"license_risk":false,"status":"Новый"}],"quick_wins":[{"id":"TXT-001","name":"...","time":"5 мин","responsible":"Разработчик"}]}
 
-ПРАВИЛА ОЦЕНКИ:
-- Вероятность (1-3): 1=низкая, 2=средняя, 3=высокая
-- Влияние (1-3): 1=низкое, 2=среднее, 3=высокое
-- Балл = вероятность × влияние
-- 7-9 = critical, 3-6 = warning, 1-2 = info
-- compliance_score: 0-100 (100 = полное соответствие). Типичные значения: критический риск = 20-40, средний = 40-65, низкий = 65-85
-- quick_wins: только задачи которые реально решаются за 5-15 минут без юриста (опечатки, добавить копирайт, исправить ссылку)
-- Выяви 15-20 рисков, 4-6 быстрых побед`;
+ПРАВИЛА: вероятность(1-3) × влияние(1-3) = балл. 7-9=critical, 3-6=warning, 1-2=info. compliance_score 0-100. Выяви 15-20 рисков, 4-6 быстрых побед.`;
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -83,9 +19,9 @@ module.exports = async function handler(req, res) {
   if (!url) return res.status(400).json({ error: 'URL required' });
 
   var today = new Date().toLocaleDateString('ru-RU');
- var msg = (legalText && legalText.trim())
-    ? 'Проведи юридический аудит сайта: ' + url + '\nДата сегодня: ' + today + '\n\nПредоставленные документы:\n' + legalText + '\n\nОТВЕЧАЙ ТОЛЬКО JSON. Первый символ ответа должен быть {. Последний символ }. Никакого текста.'
-    : 'Проведи полный юридический аудит сайта: ' + url + '\nДата сегодня: ' + today + '\n\nОТВЕЧАЙ ТОЛЬКО JSON. Первый символ ответа должен быть {. Последний символ }. Никакого текста.';
+  var msg = (legalText && legalText.trim())
+    ? 'Проведи юридический аудит сайта: ' + url + '\nДата: ' + today + '\nДокументы:\n' + legalText + '\nВЕРНИ ТОЛЬКО JSON БЕЗ ТЕКСТА.'
+    : 'Проведи юридический аудит сайта: ' + url + '\nДата: ' + today + '\nВЕРНИ ТОЛЬКО JSON БЕЗ ТЕКСТА.';
 
   try {
     var response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -99,10 +35,7 @@ module.exports = async function handler(req, res) {
         model: 'claude-sonnet-4-6',
         max_tokens: 8000,
         system: SYSTEM,
-       messages: [
-  { role: 'user', content: msg },
-  { role: 'assistant', content: '{' }
-]
+        messages: [{ role: 'user', content: msg }]
       })
     });
 
@@ -113,12 +46,13 @@ module.exports = async function handler(req, res) {
     for (var i = 0; i < data.content.length; i++) {
       if (data.content[i].type === 'text') raw += data.content[i].text;
     }
-   var jsonStart = raw.indexOf('{');
-var jsonEnd = raw.lastIndexOf('}');
-var clean = jsonStart !== -1 && jsonEnd !== -1 ? raw.slice(jsonStart, jsonEnd + 1) : raw;
+
+    // Извлечь JSON даже если модель добавила текст
+    var jsonStart = raw.indexOf('{');
+    var jsonEnd = raw.lastIndexOf('}');
+    var clean = (jsonStart !== -1 && jsonEnd !== -1) ? raw.slice(jsonStart, jsonEnd + 1) : raw;
     var parsed = JSON.parse(clean);
 
-    // Сохранить в Supabase
     if (userId && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY) {
       try {
         await fetch(process.env.SUPABASE_URL + '/rest/v1/audits', {
