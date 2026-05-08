@@ -637,6 +637,7 @@ textarea::placeholder{color:#94a3b8}
       </div>
       <div style="text-align:center">
         <button class="btn btn-blue" id="ind-next-btn" onclick="startScan()" disabled style="opacity:.4;padding:12px 32px;font-size:15px">Запустить аудит →</button>
+        <div id="ind-err" class="err" style="max-width:400px;margin:12px auto 0"></div>
         <div style="margin-top:10px"><button class="btn btn-ghost btn-sm" onclick="goStep(0)">← Назад</button></div>
       </div>
     </div>
@@ -923,6 +924,7 @@ async function startScan() {
     var decoder = new TextDecoder();
     var result  = null;
     var pct     = 10;
+    var apiError = null;
 
     while (true) {
       var chunk = await reader.read();
@@ -931,8 +933,10 @@ async function startScan() {
       for (var i = 0; i < lines.length; i++) {
         var line = lines[i].trim();
         if (!line.startsWith('data:')) continue;
+        var jsonStr = line.slice(5).trim();
+        if (!jsonStr) continue;
         try {
-          var ev = JSON.parse(line.slice(5).trim());
+          var ev = JSON.parse(jsonStr);
           if (ev.type === 'status') {
             msg.textContent = ev.message;
             pct = Math.min(pct + 14, 90);
@@ -942,12 +946,13 @@ async function startScan() {
             prog.style.width = '100%';
             msg.textContent = 'Готово!';
           } else if (ev.type === 'error') {
-            throw new Error(ev.message);
+            apiError = ev.message;
           }
         } catch(pe) {}
       }
     }
 
+    if (apiError) throw new Error(apiError);
     if (!result) throw new Error('Не получили данные от сервера');
     report = result;
     setSiteTag(result.site_name || url);
@@ -960,7 +965,9 @@ async function startScan() {
 
   } catch(e) {
     goStep(1);
-    showErr(e.message);
+    var indErr = document.getElementById('ind-err');
+    indErr.textContent = '⚠ ' + e.message;
+    indErr.style.display = 'block';
   }
 }
 
