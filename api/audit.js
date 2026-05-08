@@ -83,9 +83,9 @@ module.exports = async function handler(req, res) {
   if (!url) return res.status(400).json({ error: 'URL required' });
 
   var today = new Date().toLocaleDateString('ru-RU');
-  var msg = (legalText && legalText.trim())
-    ? 'Проведи юридический аудит сайта: ' + url + '\nДата сегодня: ' + today + '\n\nПредоставленные документы:\n' + legalText
-    : 'Проведи полный юридический аудит сайта: ' + url + '\nДата сегодня: ' + today;
+ var msg = (legalText && legalText.trim())
+    ? 'Проведи юридический аудит сайта: ' + url + '\nДата сегодня: ' + today + '\n\nПредоставленные документы:\n' + legalText + '\n\nОТВЕЧАЙ ТОЛЬКО JSON. Первый символ ответа должен быть {. Последний символ }. Никакого текста.'
+    : 'Проведи полный юридический аудит сайта: ' + url + '\nДата сегодня: ' + today + '\n\nОТВЕЧАЙ ТОЛЬКО JSON. Первый символ ответа должен быть {. Последний символ }. Никакого текста.';
 
   try {
     var response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -113,7 +113,9 @@ module.exports = async function handler(req, res) {
     for (var i = 0; i < data.content.length; i++) {
       if (data.content[i].type === 'text') raw += data.content[i].text;
     }
-   var clean = ('{' + raw).replace(/```json/g, '').replace(/```/g, '').trim();
+   var jsonStart = raw.indexOf('{');
+var jsonEnd = raw.lastIndexOf('}');
+var clean = jsonStart !== -1 && jsonEnd !== -1 ? raw.slice(jsonStart, jsonEnd + 1) : raw;
     var parsed = JSON.parse(clean);
 
     // Сохранить в Supabase
