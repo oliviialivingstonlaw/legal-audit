@@ -1,653 +1,652 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Legal Audit — Юридический аудит сайтов</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --black: #0a0a0a; --gray-900: #111; --gray-700: #333; --gray-500: #666;
-      --gray-300: #aaa; --gray-200: #ccc; --gray-100: #e8e8e8; --gray-50: #f5f5f5;
-      --white: #fff; --critical: #c0392b; --critical-bg: #fdf2f2;
-      --warning: #b7860b; --warning-bg: #fffbf0; --info: #1a5276; --info-bg: #f0f5fb;
-      --success: #1a6b3a; --r: 6px;
-    }
-    body { background: var(--white); color: var(--gray-900); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; line-height: 1.6; min-height: 100vh; }
-    @keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .fade { animation: fadein 0.3s ease; }
-    .spinner { width: 32px; height: 32px; border: 2px solid var(--gray-200); border-top-color: var(--black); border-radius: 50%; animation: spin 0.8s linear infinite; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RiskScan — Юридический аудит сайтов</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg2,#f5f4f0);color:#1a1a1a;font-size:14px;min-height:100vh}
+:root{--red:#c0392b;--red-bg:#fdecea;--red-b:#f5b7b1;--amber:#b7790a;--amber-bg:#fef8e7;--amber-b:#f9d97a;--blue:#3266ad;--blue-bg:#e8f4fd;--blue-b:#aacdef;--green:#2e7d32;--green-bg:#eaf6ec;--border:#e0ddd6;--bg:#fff;--bg2:#f5f4f0;--text:#1a1a1a;--text2:#666;--text3:#999;--r:8px;--rl:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadein{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes progress{from{width:0}to{width:100%}}
+.fade{animation:fadein .3s ease}
+.spin{animation:spin .8s linear infinite}
 
-    /* HEADER */
-    header { border-bottom: 2px solid var(--black); padding: 14px 32px; display: flex; align-items: center; gap: 14px; background: var(--white); position: sticky; top: 0; z-index: 100; }
-    .logo-wrap { display: flex; align-items: center; gap: 10px; }
-    .logo-img { height: 32px; width: auto; }
-    .logo-title { font-size: 16px; font-weight: 700; }
-    .logo-sub { font-size: 10px; color: var(--gray-500); }
-    .header-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
-    .user-email { font-size: 12px; color: var(--gray-500); }
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:11px 20px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:7px;font-weight:600;font-size:15px;color:var(--text);cursor:pointer}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.step-bar{display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.step{padding:6px 14px;font-size:12px;color:var(--text2);cursor:pointer;border-right:1px solid var(--border);background:var(--bg);transition:all .15s;white-space:nowrap}
+.step:last-child{border-right:none}
+.step.active{background:var(--blue);color:#fff}
+.step.done{background:#f0f0f0;color:var(--text2)}
+.topbar-right{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.btn-link{background:none;border:none;color:var(--blue);font-size:12px;cursor:pointer;font-family:inherit;padding:0;text-decoration:underline}
 
-    /* BUTTONS */
-    .btn { font-family: inherit; cursor: pointer; border-radius: var(--r); font-size: 13px; font-weight: 600; padding: 9px 18px; transition: all 0.15s; border: none; }
-    .btn-primary { background: var(--black); color: var(--white); }
-    .btn-primary:hover { opacity: 0.8; }
-    .btn-primary:disabled { opacity: 0.3; cursor: default; }
-    .btn-outline { background: var(--white); color: var(--black); border: 1.5px solid var(--gray-200); }
-    .btn-outline:hover { border-color: var(--gray-700); }
-    .btn-sm { padding: 6px 14px; font-size: 12px; }
-    .btn-ghost { background: none; color: var(--gray-500); border: none; font-size: 13px; cursor: pointer; font-family: inherit; padding: 6px 10px; }
-    .btn-ghost:hover { color: var(--black); }
+/* BTN */
+.btn{font-family:inherit;cursor:pointer;border-radius:var(--r);font-size:13px;font-weight:500;padding:8px 18px;transition:all .15s;border:none}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#1e4d87}
+.btn-primary:disabled{opacity:.4;cursor:default}
+.btn-outline{background:var(--bg);border:1px solid var(--border);color:var(--text);display:inline-flex;align-items:center;gap:5px}
+.btn-outline:hover{background:var(--bg2)}
+.btn-sm{padding:6px 14px;font-size:12px}
 
-    /* PAGES */
-    .page { display: none; }
-    .page.active { display: block; }
+/* WRAP */
+.wrap{padding:0 0 2rem}
+.content{padding:1.25rem 1.25rem 0;max-width:900px;margin:0 auto}
 
-    /* AUTH PAGE */
-    .auth-wrap { min-height: calc(100vh - 60px); display: flex; align-items: center; justify-content: center; padding: 20px; }
-    .auth-box { width: 100%; max-width: 400px; }
-    .auth-box h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-    .auth-box p { color: var(--gray-500); font-size: 13px; margin-bottom: 28px; }
-    .form-group { margin-bottom: 14px; }
-    .form-label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin-bottom: 6px; }
-    input[type="email"], input[type="password"], input[type="text"] {
-      width: 100%; border: 1.5px solid var(--gray-200); border-radius: var(--r);
-      padding: 10px 14px; font-size: 14px; color: var(--black); outline: none;
-      font-family: inherit; transition: border-color 0.15s; background: var(--white);
-    }
-    input:focus { border-color: var(--black); }
-    input::placeholder { color: var(--gray-300); }
-    .auth-divider { text-align: center; font-size: 12px; color: var(--gray-300); margin: 16px 0; position: relative; }
-    .auth-divider::before, .auth-divider::after { content: ''; position: absolute; top: 50%; width: 42%; height: 1px; background: var(--gray-100); }
-    .auth-divider::before { left: 0; } .auth-divider::after { right: 0; }
-    .btn-google { width: 100%; background: var(--white); border: 1.5px solid var(--gray-200); border-radius: var(--r); padding: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; transition: border-color 0.15s; }
-    .btn-google:hover { border-color: var(--gray-500); }
-    .auth-switch { text-align: center; margin-top: 18px; font-size: 13px; color: var(--gray-500); }
-    .auth-switch a { color: var(--black); font-weight: 600; cursor: pointer; text-decoration: underline; }
-    .auth-msg { text-align: center; font-size: 13px; padding: 10px; border-radius: var(--r); margin-top: 12px; }
-    .auth-msg.error { background: var(--critical-bg); color: var(--critical); }
-    .auth-msg.success { background: #f0faf5; color: var(--success); }
+/* AUTH */
+.auth-center{min-height:calc(100vh - 52px);display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-box{width:100%;max-width:380px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:28px 24px}
+.auth-box h1{font-size:19px;font-weight:600;margin-bottom:3px}
+.auth-box p{font-size:12px;color:var(--text2);margin-bottom:20px}
+.form-lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:5px}
+input[type="email"],input[type="password"],input[type="text"]{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:13px;color:var(--text);outline:none;font-family:inherit;transition:border-color .15s;background:var(--bg)}
+input:focus{border-color:var(--blue)}
+input::placeholder{color:#bbb}
+.form-group{margin-bottom:12px}
+.btn-google{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:9px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-google:hover{background:var(--bg2)}
+.divider{text-align:center;font-size:11px;color:#ccc;margin:12px 0;position:relative}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:#eee}
+.divider::before{left:0}.divider::after{right:0}
+.auth-switch{text-align:center;margin-top:14px;font-size:12px;color:var(--text2)}
+.auth-switch a{color:var(--blue);cursor:pointer;font-weight:500}
+.auth-msg{text-align:center;font-size:12px;padding:8px;border-radius:var(--r);margin-top:10px;display:none}
+.auth-msg.err{background:var(--red-bg);color:var(--red)}
+.auth-msg.ok{background:var(--green-bg);color:var(--green)}
 
-    /* DASHBOARD */
-    .dash-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
-    .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
-    .dash-header h2 { font-size: 20px; font-weight: 700; }
-    .audit-grid { display: grid; gap: 12px; }
-    .audit-card { border: 1px solid var(--gray-100); border-radius: 8px; padding: 18px 20px; cursor: pointer; transition: all 0.15s; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
-    .audit-card:hover { border-color: var(--black); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    .audit-card-title { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
-    .audit-card-url { font-size: 11px; color: var(--gray-500); }
-    .audit-card-meta { font-size: 11px; color: var(--gray-300); margin-top: 4px; }
-    .audit-card-right { text-align: right; }
-    .risk-pill { display: inline-block; border-radius: 20px; padding: 3px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
-    .risk-high { background: var(--critical-bg); color: var(--critical); }
-    .risk-medium { background: var(--warning-bg); color: var(--warning); }
-    .risk-low { background: #f0faf5; color: var(--success); }
-    .empty-state { text-align: center; padding: 60px 20px; color: var(--gray-500); }
-    .empty-state .icon { font-size: 40px; margin-bottom: 14px; }
-    .empty-state h3 { font-size: 16px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px; }
+/* SCREEN */
+.screen{display:none}
+.screen.visible{display:block}
 
-    /* NEW AUDIT PAGE */
-    .audit-wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px; }
-    .audit-wrap h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
-    .audit-wrap .sub { font-size: 13px; color: var(--gray-500); margin-bottom: 28px; }
-    .card { border: 1px solid var(--gray-100); border-radius: 8px; padding: 22px; margin-bottom: 16px; }
-    .field-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin-bottom: 8px; display: block; }
-    .url-row { display: flex; gap: 10px; }
-    .url-row input { flex: 1; }
-    .toggle-link { background: none; border: none; color: var(--gray-500); font-size: 12px; cursor: pointer; font-family: inherit; text-decoration: underline; padding: 0; margin-top: 12px; display: block; }
-    textarea { width: 100%; border: 1.5px solid var(--gray-200); border-radius: var(--r); padding: 12px 14px; font-size: 13px; color: var(--black); outline: none; font-family: inherit; resize: vertical; min-height: 120px; transition: border-color 0.15s; }
-    textarea:focus { border-color: var(--black); }
-    .loading-wrap { text-align: center; padding: 60px 20px; }
-    .loading-wrap .spinner { margin: 0 auto 20px; }
-    .loading-msg { font-size: 15px; font-weight: 600; }
-    .loading-sub { font-size: 12px; color: var(--gray-500); margin-top: 6px; }
-    .error-box { background: var(--critical-bg); border: 1px solid rgba(192,57,43,0.2); border-radius: var(--r); padding: 12px 16px; font-size: 13px; color: var(--critical); margin-top: 12px; display: none; }
+/* STEP 0 - URL */
+.url-block{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:2.5rem 2rem;text-align:center;margin-bottom:1rem}
+.url-block h2{font-size:18px;font-weight:600;margin-bottom:6px}
+.url-block p{font-size:13px;color:var(--text2);margin-bottom:1.5rem;line-height:1.5}
+.url-row{display:flex;gap:8px;max-width:500px;margin:0 auto}
+.url-row input{flex:1;font-size:14px;padding:9px 14px}
+.check-badges{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px}
+.cbadge{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b);border-radius:20px;font-size:11px;font-weight:500;padding:3px 10px}
 
-    /* REPORT PAGE */
-    .report-wrap { max-width: 900px; margin: 0 auto; padding: 28px 20px 60px; }
-    .report-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
-    .report-title { font-size: 20px; font-weight: 700; }
-    .report-meta { font-size: 12px; color: var(--gray-500); margin-top: 3px; }
-    .report-actions { display: flex; gap: 8px; }
-    .summary-card { border: 2px solid var(--black); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-    .risk-level { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
-    .rl-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); font-weight: 600; }
-    .rl-val { font-size: 16px; font-weight: 700; }
-    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-    .stat { border: 1px solid var(--gray-100); border-radius: 6px; padding: 14px; text-align: center; }
-    .stat-n { font-size: 28px; font-weight: 700; line-height: 1; }
-    .stat-l { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin-top: 5px; }
-    .summary-text { background: var(--gray-50); border-left: 3px solid var(--black); padding: 12px 16px; border-radius: 0 4px 4px 0; font-size: 13px; line-height: 1.7; color: var(--gray-700); }
-    .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--black); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--gray-100); }
-    .riskmap-wrap { margin-bottom: 20px; }
-    .riskmap-container { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
-    .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 11px; }
-    .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-    .filter-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-    .filter-btn { background: var(--white); border: 1px solid var(--gray-200); border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; color: var(--gray-500); transition: all 0.15s; }
-    .filter-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th { background: var(--black); color: var(--white); padding: 8px 12px; text-align: left; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; }
-    td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
-    tr:hover td { background: var(--gray-50); }
-    .badge { display: inline-block; border-radius: 3px; padding: 2px 7px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-    .badge-critical { background: var(--critical-bg); color: var(--critical); }
-    .badge-warning { background: var(--warning-bg); color: var(--warning); }
-    .badge-info { background: var(--info-bg); color: var(--info); }
-    .score-pill { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-size: 11px; font-weight: 700; }
-    .sc-high { background: var(--critical-bg); color: var(--critical); }
-    .sc-med { background: var(--warning-bg); color: var(--warning); }
-    .sc-low { background: var(--gray-50); color: var(--gray-500); }
-    .risk-name { font-weight: 600; margin-bottom: 3px; }
-    .risk-desc { font-size: 11px; color: var(--gray-700); line-height: 1.5; }
-    .risk-norm { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
+/* STEP 1 - SCANNING */
+.scanning{text-align:center;padding:3rem 1rem}
+.scan-label{font-size:14px;color:var(--text2);margin-bottom:1rem;font-weight:500}
+.progress-bar{height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;max-width:400px;margin:0 auto 12px}
+.progress-fill{height:100%;background:var(--blue);border-radius:3px;width:0;transition:width .4s}
+.scan-status{font-size:12px;color:var(--text2)}
+.spin-wrap{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;margin:0 auto 16px;animation:spin .8s linear infinite}
 
-    @media (max-width: 600px) {
-      header { padding: 12px 16px; }
-      .dash-wrap, .audit-wrap, .report-wrap { padding: 20px 14px 40px; }
-      .url-row { flex-direction: column; }
-      th:nth-child(5), td:nth-child(5) { display: none; }
-    }
-  </style>
+/* STEP 2 - REPORT */
+.fine-banner{background:linear-gradient(135deg,var(--red-bg),var(--amber-bg));border:1px solid var(--red-b);border-radius:var(--rl);padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;gap:14px}
+.fine-icon{width:38px;height:38px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.fine-num{font-size:20px;font-weight:600;color:var(--red)}
+.fine-sub{font-size:12px;color:var(--amber);margin-top:1px}
+.safety-score{margin-left:auto;text-align:center}
+.safety-num{font-size:28px;font-weight:600;color:var(--red);line-height:1}
+.safety-lbl{font-size:11px;color:var(--amber);margin-top:2px}
+
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem}
+.metric{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.metric-label{font-size:11px;color:var(--text2);margin-bottom:4px}
+.metric-val{font-size:22px;font-weight:600;line-height:1}
+.metric-val.red{color:var(--red)}
+.metric-val.amber{color:var(--amber)}
+.metric-val.green{color:var(--green)}
+.metric-val.blue{color:var(--blue)}
+.metric-sub{font-size:11px;color:var(--text2);margin-top:3px}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.1rem}
+.card-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+
+/* BARS */
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bar-name{font-size:12px;color:var(--text2);width:84px;flex-shrink:0;text-align:right}
+.bar-track{flex:1;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.bar-num{font-size:12px;font-weight:500;color:var(--text);width:20px;text-align:right}
+
+/* ROADMAP */
+.rm-week{margin-bottom:14px}
+.rm-header{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.rm-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:10px;margin:0 4px 4px 0;border:1px solid;font-weight:500}
+.rm-tag.red{background:var(--red-bg);color:var(--red);border-color:var(--red-b)}
+.rm-tag.amber{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-b)}
+.rm-tag.blue{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-b)}
+
+/* QUICK WINS */
+.win-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg2);border-radius:var(--r);margin-bottom:6px;font-size:13px}
+.win-icon{width:28px;height:28px;border-radius:50%;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.win-text{flex:1;color:var(--text)}
+.win-time{font-size:11px;color:var(--text2);flex-shrink:0;white-space:nowrap}
+
+/* RISK LIST */
+.risk-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:10px}
+.rtab{padding:7px 14px;font-size:12px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:all .15s}
+.rtab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.risk-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #f0ede8}
+.risk-item:last-child{border-bottom:none}
+.badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;flex-shrink:0;margin-top:2px}
+.badge.red{background:var(--red-bg);color:var(--red)}
+.badge.amber{background:var(--amber-bg);color:var(--amber)}
+.badge.green{background:var(--green-bg);color:var(--green)}
+.risk-title{font-size:13px;color:var(--text);font-weight:500;line-height:1.4}
+.risk-meta{font-size:11px;color:var(--text2);margin-top:2px}
+.risk-right{margin-left:auto;text-align:right;flex-shrink:0}
+.risk-fine{font-size:12px;font-weight:600;color:var(--red)}
+.risk-law{font-size:10px;color:var(--text2);margin-top:1px}
+
+/* EXPORT ROW */
+.export-row{display:flex;gap:8px;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);flex-wrap:wrap}
+
+/* DASHBOARD LIST */
+.dash-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:all .15s;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+.dash-item:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(50,102,173,.1)}
+.dash-item-title{font-weight:600;font-size:14px;margin-bottom:3px}
+.dash-item-meta{font-size:12px;color:var(--text2)}
+.rpill{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+.rpill.red{background:var(--red-bg);color:var(--red)}
+.rpill.amber{background:var(--amber-bg);color:var(--amber)}
+.rpill.green{background:var(--green-bg);color:var(--green)}
+
+/* ERROR */
+.err-box{background:var(--red-bg);border:1px solid var(--red-b);border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--red);margin-top:10px;display:none}
+
+@media(max-width:640px){
+  .metrics-row{grid-template-columns:1fr 1fr}
+  .two-col{grid-template-columns:1fr}
+  .url-row{flex-direction:column}
+  .step{padding:5px 10px}
+}
+</style>
 </head>
 <body>
+<div class="wrap">
 
-<header>
-  <div class="logo-wrap">
-    <img src="/logo.png" class="logo-img" alt="" onerror="this.style.display='none'">
-    <div>
-      <div class="logo-title">Legal Audit</div>
-      <div class="logo-sub">Юридический аудит · РФ 2026</div>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo" onclick="goHome()">
+      <div class="logo-dot"></div>
+      RiskScan
+    </div>
+    <div class="step-bar" id="step-bar" style="display:none">
+      <div class="step done" onclick="goStep(0)" id="step0">1 · URL</div>
+      <div class="step done" onclick="goStep(1)" id="step1">2 · Анализ</div>
+      <div class="step active" id="step2">3 · Отчёт</div>
+    </div>
+    <div class="topbar-right">
+      <span id="topbar-site"></span>
+      <button class="btn-link" id="btn-logout" style="display:none" onclick="logout()">Выйти</button>
     </div>
   </div>
-  <div class="header-right">
-    <span class="user-email" id="user-email-display"></span>
-    <button class="btn-ghost" id="btn-dashboard" onclick="showPage('dashboard')" style="display:none">Мои аудиты</button>
-    <button class="btn-ghost" id="btn-logout" onclick="logout()" style="display:none">Выйти</button>
-  </div>
-</header>
 
-<!-- AUTH PAGE -->
-<div id="page-auth" class="page active">
-  <div class="auth-wrap">
-    <div class="auth-box fade">
-      <h1 id="auth-title">Вход в систему</h1>
-      <p id="auth-desc">Введите email и пароль для доступа к аудитам</p>
-
-      <button class="btn-google" onclick="loginGoogle()">
-        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 6.293C4.672 4.166 6.656 3.58 9 3.58z"/></svg>
-        Войти через Google
-      </button>
-
-      <div class="auth-divider">или</div>
-
-      <div class="form-group">
-        <label class="form-label">Email</label>
-        <input type="email" id="auth-email" placeholder="you@example.com" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Пароль</label>
-        <input type="password" id="auth-password" placeholder="Минимум 6 символов" onkeydown="if(event.key==='Enter')submitAuth()" />
-      </div>
-      <button class="btn btn-primary" style="width:100%;padding:12px" onclick="submitAuth()" id="auth-submit-btn">Войти</button>
-      <div class="auth-msg" id="auth-msg" style="display:none"></div>
-      <div class="auth-switch">
-        <span id="auth-switch-text">Нет аккаунта?</span>
-        <a onclick="toggleAuthMode()" id="auth-switch-link">Зарегистрироваться</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- DASHBOARD PAGE -->
-<div id="page-dashboard" class="page">
-  <div class="dash-wrap fade">
-    <div class="dash-header">
-      <div>
-        <h2>Мои аудиты</h2>
-        <p style="font-size:13px;color:var(--gray-500);margin-top:3px">История всех проведённых аудитов</p>
-      </div>
-      <button class="btn btn-primary" onclick="showPage('new-audit')">+ Новый аудит</button>
-    </div>
-    <div id="audits-loading" style="text-align:center;padding:40px">
-      <div class="spinner" style="margin:0 auto"></div>
-    </div>
-    <div id="audits-list" class="audit-grid" style="display:none"></div>
-    <div id="audits-empty" class="empty-state" style="display:none">
-      <div class="icon">📋</div>
-      <h3>Аудитов пока нет</h3>
-      <p style="margin-bottom:18px">Проведите первый юридический аудит сайта</p>
-      <button class="btn btn-primary" onclick="showPage('new-audit')">Начать аудит</button>
-    </div>
-  </div>
-</div>
-
-<!-- NEW AUDIT PAGE -->
-<div id="page-new-audit" class="page">
-  <div class="audit-wrap fade">
-    <h2>Новый аудит</h2>
-    <p class="sub">47 норм российского законодательства · Карта рисков · PDF</p>
-
-    <div id="audit-form">
-      <div class="card">
-        <label class="field-label">URL сайта</label>
-        <div class="url-row">
-          <input type="text" id="url-input" placeholder="https://example.ru" />
-          <button class="btn btn-primary" onclick="runAudit()" id="run-btn">Запустить →</button>
+  <!-- AUTH SCREEN -->
+  <div id="page-auth" style="display:none">
+    <div class="auth-center">
+      <div class="auth-box fade">
+        <h1 id="auth-title">Вход в RiskScan</h1>
+        <p id="auth-desc">Юридический аудит сайтов по законодательству РФ</p>
+        <button class="btn-google" onclick="loginGoogle()">
+          <svg width="16" height="16" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 6.293C4.672 4.166 6.656 3.58 9 3.58z"/></svg>
+          Войти через Google
+        </button>
+        <div class="divider">или</div>
+        <div class="form-group">
+          <label class="form-lbl">Email</label>
+          <input type="email" id="auth-email" placeholder="you@example.com"/>
         </div>
-        <button class="toggle-link" onclick="togglePaste()" id="paste-toggle">▼ Вставить текст правовых документов</button>
-        <div id="paste-area" style="display:none;margin-top:12px">
-          <label class="field-label" style="margin-top:8px">Текст оферты, политики конфиденциальности и т.д.</label>
-          <textarea id="legal-text" placeholder="Вставьте текст правовых документов для точного анализа…"></textarea>
+        <div class="form-group">
+          <label class="form-lbl">Пароль</label>
+          <input type="password" id="auth-password" placeholder="Минимум 6 символов" onkeydown="if(event.key==='Enter')doAuth()"/>
         </div>
-      </div>
-      <div id="audit-error" class="error-box"></div>
-    </div>
-
-    <div id="audit-loading" style="display:none">
-      <div class="loading-wrap">
-        <div class="spinner"></div>
-        <div class="loading-msg" id="loading-msg">Анализирую сайт…</div>
-        <div class="loading-sub" id="loading-url-display"></div>
-        <div class="loading-sub" style="margin-top:4px">Проверяю 47 норм законодательства · 30–60 сек</div>
+        <button class="btn btn-primary" style="width:100%;padding:10px" onclick="doAuth()" id="auth-btn">Войти</button>
+        <div class="auth-msg" id="auth-msg"></div>
+        <div class="auth-switch"><span id="auth-sw1">Нет аккаунта?</span> <a onclick="toggleAuth()" id="auth-sw2">Зарегистрироваться</a></div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- REPORT PAGE -->
-<div id="page-report" class="page">
-  <div class="report-wrap fade" id="report-content"></div>
+  <!-- DASHBOARD -->
+  <div id="page-dash" style="display:none">
+    <div class="content fade">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div>
+          <h2 style="font-size:18px;font-weight:600">Мои аудиты</h2>
+          <p style="font-size:12px;color:var(--text2);margin-top:3px">История всех проведённых аудитов</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="startNewAudit()">+ Новый аудит</button>
+      </div>
+      <div id="dash-loading" style="text-align:center;padding:40px"><div class="spin-wrap" style="margin:0 auto"></div></div>
+      <div id="dash-list" style="display:none"></div>
+      <div id="dash-empty" style="display:none;text-align:center;padding:60px 20px;color:var(--text2)">
+        <div style="font-size:36px;margin-bottom:12px">📋</div>
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px">Аудитов пока нет</div>
+        <p style="margin-bottom:16px;font-size:13px">Проведите первый аудит сайта</p>
+        <button class="btn btn-primary btn-sm" onclick="startNewAudit()">Начать аудит →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIT FLOW (steps 0,1,2) -->
+  <div id="page-audit" style="display:none">
+    <div class="content">
+
+      <!-- STEP 0: URL -->
+      <div class="screen" id="s0">
+        <div class="url-block fade">
+          <h2>Проверьте ваш сайт на юридические риски</h2>
+          <p>Введите URL — получите полный отчёт по 47 нормам российского законодательства</p>
+          <div class="url-row">
+            <input type="text" placeholder="https://your-site.ru" id="urlInput"/>
+            <button class="btn btn-primary" onclick="startScan()">Проверить →</button>
+          </div>
+          <div style="margin-top:12px">
+            <button onclick="togglePaste()" style="background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline" id="paste-btn">▼ Вставить текст документов</button>
+            <div id="paste-area" style="display:none;margin-top:10px;max-width:500px;margin-left:auto;margin-right:auto">
+              <textarea id="legalText" placeholder="Текст оферты, политики конфиденциальности и т.д. — для более точного анализа" style="width:100%;height:100px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;font-family:inherit;resize:vertical;outline:none"></textarea>
+            </div>
+          </div>
+          <div class="check-badges" style="margin-top:16px">
+            <span class="cbadge">A — Персональные данные</span>
+            <span class="cbadge">B — Реклама и ERID</span>
+            <span class="cbadge">C — ЗоЗПП</span>
+            <span class="cbadge">F — Лицензирование</span>
+            <span class="cbadge">H — E-commerce</span>
+            <span class="cbadge">+42 нормы</span>
+          </div>
+          <div id="s0-error" class="err-box"></div>
+        </div>
+      </div>
+
+      <!-- STEP 1: SCANNING -->
+      <div class="screen" id="s1">
+        <div class="scanning fade">
+          <div class="spin-wrap"></div>
+          <div class="scan-label">Сканирование сайта...</div>
+          <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+          <div class="scan-status" id="scanStatus">Загружаем страницы сайта</div>
+        </div>
+      </div>
+
+      <!-- STEP 2: REPORT -->
+      <div class="screen" id="s2">
+        <div id="report-inner" class="fade"></div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <script>
-// ── CONFIG ── замени на свои значения из Supabase
-var SUPABASE_URL = 'https://zowkxmrmqvlzbncuzhxk.supabase.co';
-var SUPABASE_ANON_KEY = 'sb_publishable_i-9PcWN89WyWVqtcfOMO4g_ifFHElUk';
+// ── CONFIG ──
+var SUPABASE_URL = 'ТВОЙ_SUPABASE_URL';
+var SUPABASE_ANON_KEY = 'ТВОЙ_SUPABASE_ANON_KEY';
+var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 var currentUser = null;
 var currentReport = null;
-var activeFilter = 'all';
-var pasteOpen = false;
-var loadingIv = null;
 var isLogin = true;
-
-var STEPS = [
-  'Анализирую структуру сайта…',
-  'Проверяю требования 152-ФЗ…',
-  'Изучаю рекламные требования (ERID, ОРД)…',
-  'Оцениваю соответствие ЗоЗПП…',
-  'Проверяю лицензирование и ИС…',
-  'Формирую реестр рисков…'
-];
+var pasteOpen = false;
+var scanInterval = null;
+var currentAuditRisks = [];
+var activeRiskTab = 'all';
 
 // ── AUTH ──
-supabase.auth.onAuthStateChange(function(event, session) {
-  if (session && session.user) {
+sb.auth.onAuthStateChange(function(event, session){
+  if(session && session.user){
     currentUser = session.user;
-    document.getElementById('user-email-display').textContent = session.user.email || '';
-    document.getElementById('btn-dashboard').style.display = 'block';
-    document.getElementById('btn-logout').style.display = 'block';
-    showPage('dashboard');
-    loadAudits();
+    document.getElementById('btn-logout').style.display='block';
+    showPage('dash');
+    loadDash();
   } else {
     currentUser = null;
-    document.getElementById('user-email-display').textContent = '';
-    document.getElementById('btn-dashboard').style.display = 'none';
-    document.getElementById('btn-logout').style.display = 'none';
+    document.getElementById('btn-logout').style.display='none';
     showPage('auth');
   }
 });
 
-function toggleAuthMode() {
-  isLogin = !isLogin;
-  document.getElementById('auth-title').textContent = isLogin ? 'Вход в систему' : 'Регистрация';
-  document.getElementById('auth-desc').textContent = isLogin ? 'Введите email и пароль для доступа к аудитам' : 'Создайте аккаунт для сохранения аудитов';
-  document.getElementById('auth-submit-btn').textContent = isLogin ? 'Войти' : 'Зарегистрироваться';
-  document.getElementById('auth-switch-text').textContent = isLogin ? 'Нет аккаунта?' : 'Уже есть аккаунт?';
-  document.getElementById('auth-switch-link').textContent = isLogin ? 'Зарегистрироваться' : 'Войти';
-  hideAuthMsg();
+function toggleAuth(){
+  isLogin=!isLogin;
+  document.getElementById('auth-title').textContent=isLogin?'Вход в RiskScan':'Регистрация';
+  document.getElementById('auth-desc').textContent=isLogin?'Юридический аудит сайтов по законодательству РФ':'Создайте аккаунт для сохранения аудитов';
+  document.getElementById('auth-btn').textContent=isLogin?'Войти':'Зарегистрироваться';
+  document.getElementById('auth-sw1').textContent=isLogin?'Нет аккаунта?':'Уже есть аккаунт?';
+  document.getElementById('auth-sw2').textContent=isLogin?'Зарегистрироваться':'Войти';
+  document.getElementById('auth-msg').style.display='none';
 }
-
-async function submitAuth() {
-  var email = document.getElementById('auth-email').value.trim();
-  var password = document.getElementById('auth-password').value;
-  if (!email || !password) { showAuthMsg('Введите email и пароль', 'error'); return; }
-  document.getElementById('auth-submit-btn').disabled = true;
-  document.getElementById('auth-submit-btn').textContent = '…';
-  try {
-    var result = isLogin
-      ? await supabase.auth.signInWithPassword({ email: email, password: password })
-      : await supabase.auth.signUp({ email: email, password: password });
-    if (result.error) {
-      showAuthMsg(result.error.message, 'error');
-    } else if (!isLogin && !result.data.session) {
-      showAuthMsg('Проверьте email — отправили письмо для подтверждения', 'success');
-    }
-  } catch(e) {
-    showAuthMsg(e.message, 'error');
-  } finally {
-    document.getElementById('auth-submit-btn').disabled = false;
-    document.getElementById('auth-submit-btn').textContent = isLogin ? 'Войти' : 'Зарегистрироваться';
-  }
+async function doAuth(){
+  var email=document.getElementById('auth-email').value.trim();
+  var pass=document.getElementById('auth-password').value;
+  if(!email||!pass){showAuthMsg('Введите email и пароль','err');return;}
+  var btn=document.getElementById('auth-btn');btn.disabled=true;btn.textContent='…';
+  try{
+    var r=isLogin?await sb.auth.signInWithPassword({email,password:pass}):await sb.auth.signUp({email,password:pass});
+    if(r.error)showAuthMsg(r.error.message,'err');
+    else if(!isLogin&&!r.data.session)showAuthMsg('Проверьте email — отправили письмо','ok');
+  }catch(e){showAuthMsg(e.message,'err');}
+  btn.disabled=false;btn.textContent=isLogin?'Войти':'Зарегистрироваться';
 }
-
-async function loginGoogle() {
-  await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin } });
-}
-
-async function logout() {
-  await supabase.auth.signOut();
-}
-
-function showAuthMsg(msg, type) {
-  var el = document.getElementById('auth-msg');
-  el.textContent = msg; el.className = 'auth-msg ' + type; el.style.display = 'block';
-}
-function hideAuthMsg() {
-  document.getElementById('auth-msg').style.display = 'none';
-}
+async function loginGoogle(){await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}});}
+async function logout(){await sb.auth.signOut();}
+function showAuthMsg(msg,type){var el=document.getElementById('auth-msg');el.textContent=msg;el.className='auth-msg '+type;el.style.display='block';}
 
 // ── PAGES ──
-function showPage(name) {
-  ['auth','dashboard','new-audit','report'].forEach(function(p) {
-    document.getElementById('page-' + p).classList.remove('active');
-  });
-  document.getElementById('page-' + name).classList.add('active');
-  if (name === 'new-audit') {
-    document.getElementById('audit-form').style.display = 'block';
-    document.getElementById('audit-loading').style.display = 'none';
-    document.getElementById('audit-error').style.display = 'none';
-    document.getElementById('url-input').value = '';
-  }
+function showPage(name){
+  ['page-auth','page-dash','page-audit'].forEach(function(p){document.getElementById(p).style.display='none';});
+  document.getElementById('page-'+name).style.display='block';
+  document.getElementById('step-bar').style.display=name==='audit'?'flex':'none';
+}
+function goHome(){showPage('dash');loadDash();}
+function startNewAudit(){
+  showPage('audit');
+  goStep(0);
+  document.getElementById('urlInput').value='';
+  document.getElementById('legalText').value='';
+  document.getElementById('topbar-site').textContent='';
 }
 
 // ── DASHBOARD ──
-async function loadAudits() {
-  if (!currentUser) return;
-  document.getElementById('audits-loading').style.display = 'block';
-  document.getElementById('audits-list').style.display = 'none';
-  document.getElementById('audits-empty').style.display = 'none';
-
-  try {
-    var res = await fetch('/api/audits?userId=' + currentUser.id);
-    var data = await res.json();
-    document.getElementById('audits-loading').style.display = 'none';
-    if (!data || data.length === 0) {
-      document.getElementById('audits-empty').style.display = 'block';
-    } else {
-      document.getElementById('audits-list').style.display = 'grid';
-      document.getElementById('audits-list').innerHTML = data.map(function(a) {
-        var riskClass = a.overall_risk === 'высокий' ? 'risk-high' : a.overall_risk === 'средний' ? 'risk-medium' : 'risk-low';
-        var date = a.created_at ? new Date(a.created_at).toLocaleDateString('ru-RU') : '';
-        return '<div class="audit-card" onclick="openAudit(\'' + a.id + '\')">' +
-          '<div><div class="audit-card-title">' + esc(a.site_name || a.url) + '</div>' +
-          '<div class="audit-card-url">' + esc(a.url) + '</div>' +
-          '<div class="audit-card-meta">' + date + ' · ' + (a.critical_count||0) + ' крит. · ' + (a.warning_count||0) + ' важных</div></div>' +
-          '<div class="audit-card-right"><span class="risk-pill ' + riskClass + '">' + (a.overall_risk||'—') + '</span></div>' +
-          '</div>';
-      }).join('');
-    }
-  } catch(e) {
-    document.getElementById('audits-loading').style.display = 'none';
-    document.getElementById('audits-empty').style.display = 'block';
-  }
+async function loadDash(){
+  if(!currentUser)return;
+  document.getElementById('dash-loading').style.display='block';
+  document.getElementById('dash-list').style.display='none';
+  document.getElementById('dash-empty').style.display='none';
+  try{
+    var res=await fetch('/api/audits?userId='+currentUser.id);
+    var data=await res.json();
+    document.getElementById('dash-loading').style.display='none';
+    if(!data||!data.length){document.getElementById('dash-empty').style.display='block';return;}
+    document.getElementById('dash-list').style.display='block';
+    document.getElementById('dash-list').innerHTML=data.map(function(a){
+      var lv=a.overall_risk==='высокий'?'red':a.overall_risk==='средний'?'amber':'green';
+      var dt=a.created_at?new Date(a.created_at).toLocaleDateString('ru-RU'):'';
+      return '<div class="dash-item" onclick="openAudit(\''+a.id+'\')">'+
+        '<div><div class="dash-item-title">'+esc(a.site_name||a.url||'')+'</div>'+
+        '<div class="dash-item-meta">'+esc(a.url||'')+' · '+dt+' · <span style="color:var(--red)">'+(a.critical_count||0)+' крит.</span> · '+(a.warning_count||0)+' важных</div></div>'+
+        '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">'+
+        '<span class="rpill '+lv+'">'+(a.overall_risk||'—')+'</span>'+
+        '<span style="color:var(--text2);font-size:18px">›</span></div></div>';
+    }).join('');
+  }catch(e){document.getElementById('dash-loading').style.display='none';document.getElementById('dash-empty').style.display='block';}
+}
+async function openAudit(id){
+  showPage('audit');
+  goStep(2);
+  document.getElementById('report-inner').innerHTML='<div style="text-align:center;padding:40px"><div class="spin-wrap" style="margin:0 auto"></div></div>';
+  try{
+    var res=await fetch('/api/audit-get?id='+id+'&userId='+currentUser.id);
+    var row=await res.json();
+    var r=row.risks&&row.risks.risks?row.risks:row.risks&&typeof row.risks==='object'&&row.risks.site_name?row.risks:row;
+    currentReport=r;
+    document.getElementById('topbar-site').textContent=(r.site_name||r.url||'')+' · '+(r.audit_date||'');
+    renderReport(r);
+  }catch(e){document.getElementById('report-inner').innerHTML='<p style="padding:20px;color:red">Ошибка: '+esc(e.message)+'</p>';}
 }
 
-async function openAudit(id) {
-  showPage('report');
-  document.getElementById('report-content').innerHTML = '<div style="text-align:center;padding:60px"><div class="spinner" style="margin:0 auto"></div></div>';
-  try {
-    var res = await fetch('/api/audit-get?id=' + id + '&userId=' + currentUser.id);
-    var data = await res.json();
-    currentReport = data.risks ? data : Object.assign(data, { risks: [] });
-    renderReport(currentReport);
-  } catch(e) {
-    document.getElementById('report-content').innerHTML = '<p style="color:red;padding:20px">Ошибка загрузки отчёта</p>';
-  }
-}
-
-// ── NEW AUDIT ──
-document.addEventListener('DOMContentLoaded', function() {
-  var input = document.getElementById('url-input');
-  if (input) input.addEventListener('keydown', function(e) { if (e.key === 'Enter') runAudit(); });
-});
-
-function togglePaste() {
-  pasteOpen = !pasteOpen;
-  document.getElementById('paste-area').style.display = pasteOpen ? 'block' : 'none';
-  document.getElementById('paste-toggle').textContent = pasteOpen ? '▲ Скрыть' : '▼ Вставить текст правовых документов';
-}
-
-async function runAudit() {
-  var url = document.getElementById('url-input').value.trim();
-  if (!url) return;
-  document.getElementById('audit-error').style.display = 'none';
-  document.getElementById('audit-form').style.display = 'none';
-  document.getElementById('audit-loading').style.display = 'block';
-  document.getElementById('loading-url-display').textContent = url;
-
-  var step = 0;
-  document.getElementById('loading-msg').textContent = STEPS[0];
-  loadingIv = setInterval(function() {
-    step = (step + 1) % STEPS.length;
-    var el = document.getElementById('loading-msg');
-    if (el) el.textContent = STEPS[step];
-  }, 4000);
-
-  try {
-    var legalText = document.getElementById('legal-text').value;
-    var res = await fetch('/api/audit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: url, legalText: legalText, userId: currentUser ? currentUser.id : null })
-    });
-    var data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
-    currentReport = data;
-    clearInterval(loadingIv);
-    showPage('report');
-    renderReport(data);
-    loadAudits();
-  } catch(e) {
-    clearInterval(loadingIv);
-    document.getElementById('audit-form').style.display = 'block';
-    document.getElementById('audit-loading').style.display = 'none';
-    var box = document.getElementById('audit-error');
-    box.textContent = '⚠ ' + e.message;
-    box.style.display = 'block';
-  }
-}
-
-// ── REPORT ──
-function renderReport(r) {
-  var riskColors = { высокий: '#c0392b', средний: '#b7860b', низкий: '#1a6b3a' };
-  var pLabels = { critical: 'Критично', warning: 'Важно', info: 'Рекомендация' };
-  var risks = r.risks || [];
-  var sorted = risks.slice().sort(function(a,b){ return (b.score||0)-(a.score||0); });
-
-  var html = '<div class="fade">';
-
-  // Header
-  html += '<div class="report-header">';
-  html += '<div><div class="report-title">' + esc(r.site_name||'') + '</div>';
-  html += '<div class="report-meta">' + esc(r.url||'') + (r.audit_date ? ' · ' + r.audit_date : '') + '</div></div>';
-  html += '<div class="report-actions">';
-  html += '<button class="btn btn-primary btn-sm" onclick="exportPDF()">↓ PDF</button>';
-  html += '<button class="btn btn-outline btn-sm" onclick="showPage(\'dashboard\')">← Назад</button>';
-  html += '</div></div>';
-
-  // Summary
-  html += '<div class="summary-card">';
-  html += '<div class="risk-level"><span class="rl-label">Уровень риска</span>';
-  html += '<span class="rl-val" style="color:' + (riskColors[r.overall_risk]||'#333') + '">' + (r.overall_risk||'').toUpperCase() + '</span></div>';
-  html += '<div class="stats-row">';
-  html += '<div class="stat"><div class="stat-n" style="color:#c0392b">' + (r.critical_count||0) + '</div><div class="stat-l">Критичных</div></div>';
-  html += '<div class="stat"><div class="stat-n" style="color:#b7860b">' + (r.warning_count||0) + '</div><div class="stat-l">Важных</div></div>';
-  html += '<div class="stat"><div class="stat-n" style="color:#1a5276">' + (r.info_count||0) + '</div><div class="stat-l">Рекомендаций</div></div>';
-  html += '</div>';
-  if (r.max_fine) html += '<div style="font-size:12px;color:var(--gray-500);margin-bottom:14px">Суммарный максимальный штраф: <strong>' + esc(r.max_fine) + '</strong></div>';
-  html += '<div class="summary-text">' + esc(r.summary||'') + '</div></div>';
-
-  // Risk map
-  html += '<div class="riskmap-wrap"><div class="section-title">Карта рисков</div>';
-  html += '<div class="riskmap-container">' + buildMapSVG(risks);
-  html += '<div style="font-size:11px">';
-  html += '<div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div>Критический (7–9)</div>';
-  html += '<div class="legend-item"><div class="legend-dot" style="background:#b7860b"></div>Средний (3–6)</div>';
-  html += '<div class="legend-item"><div class="legend-dot" style="background:#aaa"></div>Низкий (1–2)</div>';
-  html += '</div></div></div>';
-
-  // Table
-  html += '<div><div class="section-title">Реестр рисков</div>';
-  var cats = ['all'].concat(risks.map(function(r){return r.category;}).filter(function(v,i,a){return a.indexOf(v)===i;}));
-  html += '<div class="filter-row">' + cats.map(function(c) {
-    var cnt = c === 'all' ? risks.length : risks.filter(function(r){return r.category===c;}).length;
-    var lbl = c === 'all' ? 'Все (' + cnt + ')' : (c.split('—')[0].trim()) + ' (' + cnt + ')';
-    return '<button class="filter-btn' + (c==='all'?' active':'') + '" onclick="filterRisks(this,\'' + c.replace(/'/g,"\\'") + '\')">' + lbl + '</button>';
-  }).join('') + '</div>';
-  html += '<div style="overflow-x:auto"><table><thead><tr>';
-  html += '<th style="width:60px">ID</th><th style="width:36px">Балл</th><th>Нарушение</th><th style="width:80px">Приоритет</th><th style="width:130px">Штраф</th><th style="width:50px">Срок</th>';
-  html += '</tr></thead><tbody id="risks-tbody">';
-  html += buildRisksRows(sorted);
-  html += '</tbody></table></div></div>';
-
-  html += '<div style="text-align:center;margin-top:28px;display:flex;gap:10px;justify-content:center">';
-  html += '<button class="btn btn-primary" onclick="exportPDF()">↓ Скачать PDF</button>';
-  html += '<button class="btn btn-outline" onclick="showPage(\'dashboard\')">← Все аудиты</button></div>';
-  html += '<p style="text-align:center;font-size:11px;color:var(--gray-300);margin-top:14px">Результаты носят информационный характер.</p>';
-  html += '</div>';
-
-  document.getElementById('report-content').innerHTML = html;
-}
-
-function filterRisks(btn, cat) {
-  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
-  btn.classList.add('active');
-  var risks = currentReport ? (currentReport.risks||[]) : [];
-  var filtered = cat === 'all' ? risks : risks.filter(function(r){return r.category===cat;});
-  var sorted = filtered.slice().sort(function(a,b){return (b.score||0)-(a.score||0);});
-  document.getElementById('risks-tbody').innerHTML = buildRisksRows(sorted);
-}
-
-function buildRisksRows(sorted) {
-  var pLabels = { critical: 'Критично', warning: 'Важно', info: 'Рекомендация' };
-  var pBadge = { critical: 'badge-critical', warning: 'badge-warning', info: 'badge-info' };
-  return sorted.map(function(risk) {
-    var sc = risk.score||1;
-    var scClass = sc>=7?'sc-high':sc>=3?'sc-med':'sc-low';
-    return '<tr><td style="font-family:monospace;font-size:11px;color:var(--gray-500)">' + esc(risk.id||'') + '</td>' +
-      '<td><div class="score-pill ' + scClass + '">' + sc + '</div></td>' +
-      '<td><div class="risk-name">' + esc(risk.name||'') + '</div>' +
-      '<div class="risk-desc">' + esc(risk.description||'') + '</div>' +
-      '<div class="risk-norm">' + esc(risk.norm||'') + '</div></td>' +
-      '<td><span class="badge ' + (pBadge[risk.priority]||'badge-info') + '">' + (pLabels[risk.priority]||risk.priority) + '</span></td>' +
-      '<td style="font-size:11px;font-weight:600">' + esc(risk.fine_label||'—') + '</td>' +
-      '<td style="font-size:11px">' + esc(risk.deadline||'—') + '</td></tr>';
-  }).join('');
-}
-
-function buildMapSVG(risks) {
-  var W=280,H=280,PAD=44,cW=(W-PAD)/3,cH=(H-PAD)/3;
-  var cc=function(p,i){var s=p*i;return s>=7?'#fde8e8':s>=3?'#fef9e7':'#f5f5f5';};
-  var dc=function(pr){return pr==='critical'?'#c0392b':pr==='warning'?'#b7860b':'#aaa';};
-  var svg='<svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg" style="font-family:-apple-system,sans-serif">';
-  for(var p=1;p<=3;p++)for(var i=1;i<=3;i++){
-    var x=PAD+(i-1)*cW,y=H-PAD-p*cH;
-    svg+='<rect x="'+x+'" y="'+y+'" width="'+cW+'" height="'+cH+'" fill="'+cc(p,i)+'" stroke="#ccc" stroke-width="0.5"/>';
-    svg+='<text x="'+(x+cW/2)+'" y="'+(y+cH/2+4)+'" text-anchor="middle" font-size="11" fill="#ccc" font-weight="600">'+(p*i)+'</text>';
-  }
-  var xl=['Низкое','Среднее','Высокое'],yl=['Низкая','Средняя','Высокая'];
-  for(var j=0;j<3;j++){
-    svg+='<text x="'+(PAD+(j+0.5)*cW)+'" y="'+(H-8)+'" text-anchor="middle" font-size="9" fill="#666">'+xl[j]+'</text>';
-    svg+='<text x="4" y="'+(H-PAD-(j+0.5)*cH+4)+'" text-anchor="start" font-size="9" fill="#666">'+yl[j]+'</text>';
-  }
-  svg+='<text x="'+(PAD+(W-PAD)/2)+'" y="'+(H-1)+'" text-anchor="middle" font-size="10" fill="#333" font-weight="600">Влияние</text>';
-  svg+='<text transform="rotate(-90)" x="'+(-((H-PAD)/2+PAD/2))+'" y="11" text-anchor="middle" font-size="10" fill="#333" font-weight="600">Вероятность</text>';
-  var placed={};
-  risks.forEach(function(risk){
-    var pp=Math.min(3,Math.max(1,risk.probability||1)),im=Math.min(3,Math.max(1,risk.impact||1));
-    var key=pp+'_'+im; placed[key]=(placed[key]||0)+1;
-    var cnt=placed[key];
-    var bx=PAD+(im-0.5)*cW,by=H-PAD-(pp-0.5)*cH;
-    var ox=((cnt-1)%3-1)*9,oy=Math.floor((cnt-1)/3)*9-4;
-    svg+='<circle cx="'+(bx+ox)+'" cy="'+(by+oy)+'" r="7" fill="'+dc(risk.priority)+'" opacity="0.85"><title>'+esc(risk.id)+': '+esc(risk.name)+'</title></circle>';
-    svg+='<text x="'+(bx+ox)+'" y="'+(by+oy+3)+'" text-anchor="middle" font-size="7" fill="white" font-weight="700">'+(risk.id||'').replace(/\D/g,'').slice(0,2)+'</text>';
+// ── AUDIT FLOW ──
+function goStep(n){
+  ['s0','s1','s2'].forEach(function(s,i){document.getElementById(s).className='screen'+(i===n?' visible':'');});
+  ['step0','step1','step2'].forEach(function(s,i){
+    var el=document.getElementById(s);if(!el)return;
+    el.className='step'+(i===n?' active':i<n?' done':'');
   });
-  svg+='</svg>';
-  return svg;
+}
+function togglePaste(){
+  pasteOpen=!pasteOpen;
+  document.getElementById('paste-area').style.display=pasteOpen?'block':'none';
+  document.getElementById('paste-btn').textContent=(pasteOpen?'▲ Скрыть':'▼ Вставить текст документов');
+}
+async function startScan(){
+  var url=document.getElementById('urlInput').value.trim();
+  if(!url){document.getElementById('s0-error').textContent='⚠ Введите URL сайта';document.getElementById('s0-error').style.display='block';return;}
+  document.getElementById('s0-error').style.display='none';
+  goStep(1);
+
+  var fill=document.getElementById('pfill');
+  var status=document.getElementById('scanStatus');
+  var steps=['Загружаем страницы сайта','Анализируем оферту и документы','Проверяем трекеры и cookie','Сверяем с базой законодательства','Формируем карту рисков'];
+  var i=0;
+  fill.style.width='0';
+  scanInterval=setInterval(function(){
+    fill.style.width=((i+1)/steps.length*100)+'%';
+    status.textContent=steps[i];
+    i++;if(i>=steps.length)clearInterval(scanInterval);
+  },4000);
+
+  try{
+    var legalText=document.getElementById('legalText').value;
+    var res=await fetch('/api/audit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,legalText,userId:currentUser?currentUser.id:null})});
+    var data=await res.json();
+    if(!res.ok)throw new Error(data.error||'HTTP '+res.status);
+    clearInterval(scanInterval);
+    currentReport=data;
+    fill.style.width='100%';
+    status.textContent='Готово!';
+    document.getElementById('topbar-site').textContent=(data.site_name||url)+' · '+(data.audit_date||new Date().toLocaleDateString('ru-RU'));
+    setTimeout(function(){
+      goStep(2);
+      renderReport(data);
+      loadDash();
+    },500);
+  }catch(e){
+    clearInterval(scanInterval);
+    goStep(0);
+    var box=document.getElementById('s0-error');
+    box.textContent='⚠ '+e.message;box.style.display='block';
+  }
 }
 
-function exportPDF() {
-  if (!currentReport) return;
-  var r = currentReport;
-  var rC={высокий:'#c0392b',средний:'#b7860b',низкий:'#1a6b3a'};
-  var pC={critical:'#c0392b',warning:'#b7860b',info:'#1a5276'};
-  var pL={critical:'Критично',warning:'Важно',info:'Рекомендация'};
-  var sorted=(r.risks||[]).slice().sort(function(a,b){return (b.score||0)-(a.score||0);});
-  var mapSVG=buildMapSVG(r.risks||[]);
+// ── RENDER REPORT ──
+function renderReport(r){
+  var risks=r.risks||[];
+  currentAuditRisks=risks;
+  var score=r.compliance_score||50;
+  var blocks=r.blocks||[];
+  var maxB=Math.max.apply(null,blocks.map(function(b){return b.count||0;}).concat([1]));
+
+  // Group by deadline
+  var week1=[],week2=[],month=[];
+  risks.forEach(function(risk){
+    var d=risk.deadline_days||parseInt(risk.deadline)||30;
+    if(d<=7&&risk.priority==='critical')week1.push(risk);
+    else if(d<=14&&risk.priority==='warning')week2.push(risk);
+    else if(d<=30)month.push(risk);
+  });
+
+  var qw=r.quick_wins||[];
+
+  var html='<div class="fade">';
+
+  // Fine banner
+  html+='<div class="fine-banner">'+
+    '<div class="fine-icon">⚠️</div>'+
+    '<div><div class="fine-num">'+esc(r.max_fine||'—')+'</div>'+
+    '<div class="fine-sub">суммарный штрафной потенциал · '+(r.total_risks||risks.length)+' нарушений выявлено</div></div>'+
+    '<div class="safety-score">'+
+    '<div class="safety-num">'+score+'<span style="font-size:16px">/100</span></div>'+
+    '<div class="safety-lbl">рейтинг безопасности</div></div></div>';
+
+  // Metrics
+  html+='<div class="metrics-row">'+
+    '<div class="metric"><div class="metric-label">Критических</div><div class="metric-val red">'+(r.critical_count||0)+'</div><div class="metric-sub">срок: 7–14 дней</div></div>'+
+    '<div class="metric"><div class="metric-label">Средних</div><div class="metric-val amber">'+(r.warning_count||0)+'</div><div class="metric-sub">срок: 14–30 дней</div></div>'+
+    '<div class="metric"><div class="metric-label">Низких</div><div class="metric-val green">'+(r.info_count||0)+'</div><div class="metric-sub">срок: до 90 дней</div></div>'+
+    '<div class="metric"><div class="metric-label">Быстрых исправлений</div><div class="metric-val blue">'+qw.length+'</div><div class="metric-sub">без юриста, за 1 день</div></div>'+
+    '</div>';
+
+  // Two-col: bars + roadmap
+  html+='<div class="two-col">';
+
+  // Bars
+  html+='<div class="card"><div class="card-title">Риски по блокам</div>';
+  var barColors={critical:var_('--red'),warning:'#e67e22',info:'#27ae60'};
+  blocks.forEach(function(b){
+    var pct=maxB>0?Math.round((b.count/maxB)*100):0;
+    var bc=b.level==='critical'?'var(--red)':b.level==='warning'?'#e67e22':'#27ae60';
+    html+='<div class="bar-row"><span class="bar-name">'+esc(b.name.split('—')[0].trim()||b.code)+'</span>'+
+      '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+bc+'"></div></div>'+
+      '<span class="bar-num">'+b.count+'</span></div>';
+  });
+  html+='</div>';
+
+  // Roadmap
+  html+='<div class="card"><div class="card-title">Дорожная карта устранения</div><div class="roadmap">';
+  if(week1.length){
+    html+='<div class="rm-week"><div class="rm-header">Эта неделя (7 дней)</div>';
+    week1.slice(0,6).forEach(function(r){html+='<span class="rm-tag red">'+esc(r.name.length>22?r.name.substring(0,22)+'…':r.name)+'</span>';});
+    html+='</div>';
+  }
+  if(week2.length){
+    html+='<div class="rm-week"><div class="rm-header">2-я неделя (14 дней)</div>';
+    week2.slice(0,5).forEach(function(r){html+='<span class="rm-tag amber">'+esc(r.name.length>22?r.name.substring(0,22)+'…':r.name)+'</span>';});
+    html+='</div>';
+  }
+  if(month.length){
+    html+='<div class="rm-week"><div class="rm-header">В течение месяца</div>';
+    month.slice(0,4).forEach(function(r){html+='<span class="rm-tag blue">'+esc(r.name.length>22?r.name.substring(0,22)+'…':r.name)+'</span>';});
+    html+='</div>';
+  }
+  html+='</div></div>';
+  html+='</div>';
+
+  // Quick wins
+  if(qw.length){
+    html+='<div class="card" style="margin-bottom:10px">'+
+      '<div class="card-title">⚡ Быстрые исправления — без юриста, за 1 день</div>';
+    qw.forEach(function(q){
+      html+='<div class="win-item">'+
+        '<div class="win-icon">✏️</div>'+
+        '<div class="win-text">'+esc(q.name||'')+'</div>'+
+        '<div class="win-time">'+esc(q.time||'')+'</div></div>';
+    });
+    html+='</div>';
+  }
+
+  // Risk registry
+  html+='<div class="card">'+
+    '<div class="card-title">Реестр рисков</div>'+
+    '<div class="risk-tabs">'+
+    '<button class="rtab active" onclick="filterRisks(\'all\',this)">Все ('+(r.total_risks||risks.length)+')</button>'+
+    '<button class="rtab" onclick="filterRisks(\'critical\',this)">Критические ('+(r.critical_count||0)+')</button>'+
+    '<button class="rtab" onclick="filterRisks(\'warning\',this)">Средние ('+(r.warning_count||0)+')</button>'+
+    '<button class="rtab" onclick="filterRisks(\'info\',this)">Низкие ('+(r.info_count||0)+')</button>'+
+    '</div>'+
+    '<div id="riskList"></div>'+
+    '<div class="export-row">'+
+    '<button class="btn btn-outline btn-sm" onclick="exportPDF()">📄 PDF-отчёт</button>'+
+    '<button class="btn btn-outline btn-sm" onclick="exportWord()">📝 Word-отчёт</button>'+
+    '<button class="btn btn-outline btn-sm" onclick="goHome()">← Все аудиты</button>'+
+    '</div></div>';
+
+  html+='<p style="text-align:center;font-size:11px;color:var(--text2);padding:16px 0">Аудит носит информационный характер. Не является официальным юридическим заключением.</p>';
+  html+='</div>';
+
+  document.getElementById('report-inner').innerHTML=html;
+  renderRiskList(risks,'all');
+}
+
+function var_(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
+
+function filterRisks(filter,el){
+  document.querySelectorAll('.rtab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  activeRiskTab=filter;
+  renderRiskList(currentAuditRisks,filter);
+}
+
+function renderRiskList(risks,filter){
+  var filtered=filter==='all'?risks:risks.filter(function(r){return r.priority===filter;});
+  var sorted=filtered.slice().sort(function(a,b){return (b.score||0)-(a.score||0);});
+  var el=document.getElementById('riskList');
+  if(!el)return;
+  var show=sorted.slice(0,10);
+  var priL={critical:'Критический',warning:'Средний',info:'Низкий'};
+  el.innerHTML=show.map(function(risk){
+    var bc=risk.priority==='critical'?'red':risk.priority==='warning'?'amber':'green';
+    return '<div class="risk-item">'+
+      '<span class="badge '+bc+'">'+(priL[risk.priority]||risk.priority)+'</span>'+
+      '<div style="flex:1"><div class="risk-title">'+esc((risk.id||'')+' · '+(risk.name||''))+'</div>'+
+      '<div class="risk-meta">'+esc(risk.norm||'')+'</div></div>'+
+      '<div class="risk-right"><div class="risk-fine">'+esc(risk.fine_label||'—')+'</div><div class="risk-law">штраф</div></div></div>';
+  }).join('')+(sorted.length>10?'<div style="font-size:12px;color:var(--text2);padding:8px 0;text-align:center">+ ещё '+(sorted.length-10)+' нарушений</div>':'');
+}
+
+// ── EXPORT PDF ──
+function exportPDF(){
+  if(!currentReport)return;
+  var r=currentReport;
+  var risks=r.risks||[];
+  var sorted=risks.slice().sort(function(a,b){return (b.score||0)-(a.score||0);});
+  var qw=r.quick_wins||[];
+  var pC={critical:'#c0392b',warning:'#b7790a',info:'#2e7d32'};
+  var pL={critical:'🔴 Критично',warning:'🟡 Важно',info:'🟢 Рекомендация'};
+  var pBg={critical:'#fdecea',warning:'#fef8e7',info:'#eaf6ec'};
+
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>'+
-    '@page{margin:2cm 1.8cm}body{font-family:Arial,sans-serif;font-size:11pt;color:#111}'+
-    '.cover{text-align:center;padding:40pt 0 30pt;border-bottom:2px solid #111;margin-bottom:20pt}'+
-    '.cover h1{font-size:20pt;margin-bottom:6pt}.cover .meta{font-size:10pt;color:#555}'+
-    'h2{font-size:13pt;font-weight:bold;margin:18pt 0 8pt;padding-bottom:4pt;border-bottom:1px solid #ccc}'+
-    '.stats{display:flex;gap:10pt;margin:10pt 0}.stat{flex:1;border:1pt solid #ddd;padding:8pt;text-align:center;border-radius:4pt}'+
-    '.stat .n{font-size:22pt;font-weight:bold}.stat .l{font-size:8pt;text-transform:uppercase;letter-spacing:0.05em;color:#666}'+
-    '.summary{background:#f5f5f5;border-left:3pt solid #111;padding:8pt 12pt;margin:10pt 0;font-size:10pt;line-height:1.6}'+
-    '.mapwrap{text-align:center;margin:10pt 0}'+
-    'table{width:100%;border-collapse:collapse;margin:8pt 0;font-size:9pt}'+
-    'th{background:#111;color:white;padding:6pt 8pt;text-align:left;font-size:8pt;text-transform:uppercase}'+
-    'td{padding:6pt 8pt;border-bottom:0.5pt solid #e0e0e0;vertical-align:top}'+
-    '.badge{display:inline-block;padding:1pt 6pt;border-radius:2pt;font-size:7.5pt;font-weight:bold;text-transform:uppercase}'+
-    '.spill{display:inline-flex;align-items:center;justify-content:center;width:18pt;height:18pt;border-radius:50%;font-size:8pt;font-weight:bold}'+
-    '.footer{margin-top:30pt;border-top:0.5pt solid #ccc;padding-top:8pt;font-size:8pt;color:#888;text-align:center}'+
+    '@page{margin:1.8cm 1.5cm}'+
+    'body{font-family:Arial,sans-serif;font-size:10.5pt;color:#1a1a1a}'+
+    'h1{font-size:18pt;text-align:center}h2{font-size:12pt;margin:14pt 0 6pt;padding-bottom:4pt;border-bottom:0.5pt solid #e0e0e0}'+
+    '.cover{text-align:center;padding:24pt 0 18pt;border-bottom:2pt solid #3266ad;margin-bottom:14pt}'+
+    '.fine{font-size:18pt;font-weight:bold;color:#c0392b}.safe{font-size:12pt;color:#b7790a;margin-top:4pt}'+
+    'table{width:100%;border-collapse:collapse;font-size:9pt}'+
+    'th{background:#3266ad;color:#fff;padding:5pt 8pt;text-align:left;font-size:8pt;text-transform:uppercase}'+
+    'td{padding:6pt 8pt;border-bottom:0.5pt solid #ede8e0;vertical-align:top}'+
+    '.badge{display:inline-block;padding:1pt 6pt;border-radius:8pt;font-size:7.5pt;font-weight:bold}'+
+    '.footer{margin-top:20pt;border-top:0.5pt solid #ccc;padding-top:6pt;font-size:8pt;color:#888;text-align:center}'+
     '</style></head><body>'+
-    '<div class="cover"><img src="/logo.png" onerror="this.style.display=\'none\'" style="height:40pt;margin-bottom:16pt"><br>'+
+    '<div class="cover">'+
+    '<div style="font-size:20pt;font-weight:700;color:#3266ad;margin-bottom:8pt">● RiskScan</div>'+
     '<h1>Юридический аудит сайта</h1>'+
-    '<div class="meta">'+esc(r.site_name||'')+' · '+esc(r.url||'')+'<br>Дата аудита: '+(r.audit_date||new Date().toLocaleDateString('ru-RU'))+'</div>'+
-    '<div style="margin-top:14pt;font-size:14pt;font-weight:bold;color:'+(rC[r.overall_risk]||'#333')+'">Уровень риска: '+(r.overall_risk||'').toUpperCase()+'</div>'+
-    (r.max_fine?'<div style="font-size:10pt;color:#666;margin-top:4pt">Макс. штраф: '+esc(r.max_fine)+'</div>':'')+
-    '</div><h2>Резюме</h2>'+
-    '<div class="stats">'+
-    '<div class="stat"><div class="n" style="color:#c0392b">'+(r.critical_count||0)+'</div><div class="l">Критичных</div></div>'+
-    '<div class="stat"><div class="n" style="color:#b7860b">'+(r.warning_count||0)+'</div><div class="l">Важных</div></div>'+
-    '<div class="stat"><div class="n" style="color:#1a5276">'+(r.info_count||0)+'</div><div class="l">Рекомендаций</div></div>'+
-    '</div><div class="summary">'+esc(r.summary||'')+'</div>'+
-    '<h2>Карта рисков</h2><div class="mapwrap">'+mapSVG+'</div>'+
-    '<h2>Реестр рисков</h2><table><tr><th style="width:55pt">ID</th><th style="width:28pt">Балл</th><th>Нарушение</th><th style="width:60pt">Приоритет</th><th style="width:90pt">Штраф</th><th style="width:45pt">Срок</th></tr>'+
+    '<div style="font-size:11pt;color:#666;margin-top:6pt">'+esc(r.site_name||r.url||'')+' · '+esc(r.url||'')+'<br>Дата: '+(r.audit_date||new Date().toLocaleDateString('ru-RU'))+(r.industry?' · '+esc(r.industry):'')+'</div>'+
+    '<div class="fine" style="margin-top:12pt">'+esc(r.max_fine||'—')+' — максимальный штраф</div>'+
+    '<div class="safe">Рейтинг безопасности: '+(r.compliance_score||50)+'/100 · '+(r.total_risks||risks.length)+' нарушений</div>'+
+    '</div>'+
+
+    '<h2>Сводка</h2>'+
+    '<table style="margin-bottom:12pt"><tr>'+
+    '<td style="width:25%;text-align:center;border:0.5pt solid #e0e0e0;padding:8pt"><div style="font-size:20pt;font-weight:bold;color:#c0392b">'+(r.critical_count||0)+'</div><div style="font-size:8pt;color:#888;text-transform:uppercase">Критичных</div></td>'+
+    '<td style="width:25%;text-align:center;border:0.5pt solid #e0e0e0;padding:8pt"><div style="font-size:20pt;font-weight:bold;color:#b7790a">'+(r.warning_count||0)+'</div><div style="font-size:8pt;color:#888;text-transform:uppercase">Важных</div></td>'+
+    '<td style="width:25%;text-align:center;border:0.5pt solid #e0e0e0;padding:8pt"><div style="font-size:20pt;font-weight:bold;color:#2e7d32">'+(r.info_count||0)+'</div><div style="font-size:8pt;color:#888;text-transform:uppercase">Рекомендаций</div></td>'+
+    '<td style="width:25%;text-align:center;border:0.5pt solid #e0e0e0;padding:8pt"><div style="font-size:20pt;font-weight:bold;color:#3266ad">'+qw.length+'</div><div style="font-size:8pt;color:#888;text-transform:uppercase">Быстрых правок</div></td>'+
+    '</tr></table>'+
+    '<div style="background:#fef8e7;border-left:3pt solid #3266ad;padding:8pt 12pt;font-size:10pt;line-height:1.6;margin-bottom:14pt">'+esc(r.summary||'')+'</div>'+
+
+    '<h2>Реестр рисков</h2>'+
+    '<table><tr><th style="width:52pt">Код</th><th>Нарушение</th><th style="width:58pt">Приоритет</th><th style="width:80pt">Штраф</th><th style="width:55pt">Ответств.</th><th style="width:42pt">Срок</th></tr>'+
     sorted.map(function(risk){
-      var bg=risk.priority==='critical'?'#fdf2f2':risk.priority==='warning'?'#fffbf0':'#f0f5fb';
-      var tc=pC[risk.priority]||'#666';
-      return '<tr><td style="font-family:monospace;font-size:8pt;color:#666">'+esc(risk.id||'')+'</td>'+
-        '<td><div class="spill" style="background:'+bg+';color:'+tc+'">'+(risk.score||1)+'</div></td>'+
+      return '<tr><td style="font-family:monospace;font-size:8pt;color:#888">'+esc(risk.id||'')+'</td>'+
         '<td><div style="font-weight:bold;font-size:9pt">'+esc(risk.name||'')+'</div>'+
-        '<div style="font-size:8pt;color:#555;margin-top:2pt">'+(risk.description||'').substring(0,160).replace(/</g,'&lt;')+(risk.description&&risk.description.length>160?'…':'')+'</div>'+
-        '<div style="font-size:7.5pt;color:#888;margin-top:2pt">'+esc(risk.norm||'')+'</div></td>'+
-        '<td><span class="badge" style="background:'+bg+';color:'+tc+'">'+(pL[risk.priority]||risk.priority)+'</span></td>'+
-        '<td style="font-size:8.5pt;font-weight:bold">'+esc(risk.fine_label||'—')+'</td>'+
+        '<div style="font-size:8pt;color:#666;margin-top:1pt">'+(risk.description||'').substring(0,120).replace(/</g,'&lt;')+'</div>'+
+        '<div style="font-size:7.5pt;color:#aaa">'+esc(risk.norm||'')+'</div></td>'+
+        '<td><span class="badge" style="background:'+(pBg[risk.priority]||'#eee')+';color:'+(pC[risk.priority]||'#666')+'">'+(pL[risk.priority]||risk.priority)+'</span></td>'+
+        '<td style="font-weight:bold;font-size:9pt;color:'+(pC[risk.priority]||'#666')+'">'+esc(risk.fine_label||'—')+'</td>'+
+        '<td style="font-size:8.5pt">'+esc(risk.responsible||'—')+'</td>'+
         '<td style="font-size:8.5pt">'+esc(risk.deadline||'—')+'</td></tr>';
     }).join('')+
-    '</table><h2>План устранения (критичные)</h2>'+
-    '<table><tr><th style="width:55pt">ID</th><th>Нарушение</th><th>Рекомендация</th><th style="width:45pt">Срок</th></tr>'+
-    sorted.filter(function(r){return r.priority==='critical';}).map(function(risk){
-      return '<tr><td style="font-family:monospace;font-size:8pt;color:#666">'+esc(risk.id||'')+'</td>'+
-        '<td style="font-weight:bold;font-size:8.5pt">'+esc(risk.name||'')+'</td>'+
-        '<td style="font-size:8.5pt;color:#444">'+esc(risk.action||'—')+'</td>'+
-        '<td style="font-size:8.5pt">'+esc(risk.deadline||'—')+'</td></tr>';
-    }).join('')+
-    '</table><div class="footer">Аудит проведён с использованием ИИ-системы. Носит информационный характер.</div></body></html>';
+    '</table>'+
+
+    (qw.length?'<h2>⚡ Быстрые исправления</h2>'+
+    '<table><tr><th>Задача</th><th style="width:50pt">Время</th><th style="width:80pt">Исполнитель</th></tr>'+
+    qw.map(function(q){return '<tr><td>'+esc(q.name||'')+'</td><td>'+esc(q.time||'')+'</td><td>'+esc(q.responsible||'—')+'</td></tr>';}).join('')+
+    '</table>':'')+'<div class="footer">RiskScan · Аудит проведён с использованием ИИ-системы · Носит информационный характер</div>'+
+    '</body></html>';
 
   var win=window.open('','_blank','width=900,height=700');
-  win.document.write(html); win.document.close();
+  win.document.write(html);win.document.close();
   win.onload=function(){setTimeout(function(){win.print();},300);};
 }
 
-function esc(str) {
-  return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function exportWord(){
+  exportPDF(); // Word через тот же print-диалог
 }
+
+function esc(str){return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
 </body>
 </html>
