@@ -99,7 +99,10 @@ module.exports = async function handler(req, res) {
         model: 'claude-sonnet-4-6',
         max_tokens: 8000,
         system: SYSTEM,
-        messages: [{ role: 'user', content: msg }]
+       messages: [
+  { role: 'user', content: msg },
+  { role: 'assistant', content: '{' }
+]
       })
     });
 
@@ -110,7 +113,7 @@ module.exports = async function handler(req, res) {
     for (var i = 0; i < data.content.length; i++) {
       if (data.content[i].type === 'text') raw += data.content[i].text;
     }
-    var clean = raw.replace(/```json/g, '').replace(/```/g, '').trim();
+   var clean = ('{' + raw).replace(/```json/g, '').replace(/```/g, '').trim();
     var parsed = JSON.parse(clean);
 
     // Сохранить в Supabase
