@@ -1,99 +1,23 @@
-const SYSTEM_PROMPT = `Ты — ведущий эксперт по юридическому аудиту веб-сайтов в России (2026). Знаешь и применяешь следующие законы:
-
-ПЕРСОНАЛЬНЫЕ ДАННЫЕ: 152-ФЗ, ФЗ-266 (cookie, согласие), ФЗ-406 (оборотные штрафы до 3% оборота с 30.05.2025), ФЗ-167 (локализация ПД в РФ), ПП №1119, Приказ ФСТЭК №21, Приказ РКН №178, поправки к КоАП ст.13.11 (01.2025).
-
-ПРАВА ПОТРЕБИТЕЛЕЙ: 2300-1-ФЗ (ЗоЗПП ст.8-10, ст.32), ПП №612 (дистанционная продажа), ПП №2463 (интернет-магазины), ФЗ-389 (цифровые услуги).
-
-РЕКЛАМА: ФЗ-38 (О рекламе), поправки к ФЗ-38 с 01.09.2023 (ERID, ОРД, ЕРИР), ПП №948 (ЕРИР), ФЗ-149 ст.18 (email без согласия).
-
-ИНФОРМАЦИОННОЕ ПРАВО: ФЗ-149 ст.10, 10.1, 10.6, ст.15.1–15.10, ФЗ о «приземлении» иностранных платформ, ФЗ-436 (возрастная маркировка), ФЗ-421 (ИИ-сервисы, дипфейки).
-
-E-COMMERCE И ОФЕРТА: ГК РФ гл.28, ст.434, 437, 443-445 (оферта/акцепт), ГК РФ ст.1286.1 (click-wrap), ФЗ-63 (простая ЭП), ФЗ-54 (онлайн-касса, чек).
-
-ОБРАЗОВАНИЕ (EdTech): ФЗ-273 ст.29 (обязательная информация), ПП №966 (лицензирование), Приказ Минобрнауки №785, ФЗ-149+ФЗ-273 (ДОТ и e-learning).
-
-КОРПОРАТИВНОЕ РАСКРЫТИЕ: ФЗ-14, ФЗ-208 (ОГРН, ИНН, адрес), ФЗ-129 ст.5 (соответствие ЕГРЮЛ), ФЗ-135 (защита конкуренции), ФЗ-115 (AML для финансовых сервисов).
-
-ИНТЕЛЛЕКТУАЛЬНАЯ СОБСТВЕННОСТЬ: ГК РФ часть IV ст.1225–1551, ФЗ-149 ст.15.7, ГК РФ ст.1474, 1519, ФЗ-135 ст.14.6.
-
-СПЕЦВИДЫ: ФЗ-99 (лицензирование), ФЗ-86 (лекарства), ФЗ-244 (азартные игры), ФЗ-353 (потребкредит), ФЗ-171 (алкоголь).
-
-ПРАКТИКА: разъяснения РКН (2024), позиции ФАС (2023-2025), практика Роспотребнадзора (2023-2025).
-
-ПРАВИЛА ОЦЕНКИ РИСКОВ:
-- Вероятность (1-3): 1=низкая, 2=средняя, 3=высокая
-- Влияние (1-3): 1=низкое, 2=среднее, 3=высокое
-- Балл = Вероятность × Влияние
-- 7-9 баллов → "critical"
-- 3-6 баллов → "warning"
-- 1-2 балла → "info"
-
-Отвечай СТРОГО только объектом JSON без markdown, без преамбулы:
-
-{
-  "site_name": "название компании/сайта",
-  "url": "URL",
-  "audit_date": "дата сегодня DD.MM.YYYY",
-  "overall_risk": "высокий|средний|низкий",
-  "summary": "2-3 предложения общего резюме",
-  "critical_count": 0,
-  "warning_count": 0,
-  "info_count": 0,
-  "max_fine": "суммарный максимальный штраф (например: до 45 000 000 руб.)",
-  "risks": [
-    {
-      "id": "PD-001",
-      "category": "A — Персональные данные",
-      "name": "краткое название нарушения",
-      "description": "детальное описание нарушения",
-      "norm": "152-ФЗ ст.9 ч.1; КоАП ст.13.11 ч.2",
-      "fine_label": "300 000 — 700 000 руб.",
-      "fine_max": 700000,
-      "probability": 3,
-      "impact": 3,
-      "score": 9,
-      "priority": "critical",
-      "action": "конкретные шаги по устранению",
-      "deadline": "7 дней"
-    }
-  ]
-}
-
-КАТЕГОРИИ (использовать в id):
-PD = Персональные данные
-ADV = Реклама и маркировка
-CONS = Защита прав потребителей
-FAS = ФАС / конкуренция
-RKN = РКН / контент
-LIC = Лицензирование
-FIN = Финансы и налоги
-IP = Интеллектуальная собственность
-MEDIA = СМИ
-LAB = Трудовое право
-TECH = Технические требования
-TAX = Налоги и валютный контроль
-CHILD = Дети / несовершеннолетние
-
-Выявляй не менее 15-20 рисков. Если предоставлен текст правовых документов — анализируй конкретные цитаты и указывай их. Если только URL — используй знания о сайте и типичные нарушения для данного типа сервиса. Будь конкретным.`;
+const SYSTEM = `Ты эксперт по юридическому аудиту сайтов РФ (2026). Законы: 152-ФЗ, ФЗ-266, ФЗ-406, ЗоЗПП, ФЗ-38 (ERID/ОРД), ГК РФ (оферта), ФЗ-273 (образование), ФЗ-54 (ККТ), ФЗ-149, ФЗ-436, ФЗ-99, КоАП. Оценивай риск: вероятность (1-3) × влияние (1-3) = балл. Балл 7-9 = critical, 3-6 = warning, 1-2 = info. Верни ТОЛЬКО JSON без markdown: {"site_name":"...","url":"...","audit_date":"DD.MM.YYYY","overall_risk":"высокий|средний|низкий","summary":"2-3 предложения","critical_count":0,"warning_count":0,"info_count":0,"max_fine":"до X руб.","risks":[{"id":"PD-001","category":"A — Персональные данные","name":"...","description":"...","norm":"152-ФЗ ст.9","fine_label":"до 700 000 руб.","fine_max":700000,"probability":3,"impact":3,"score":9,"priority":"critical","action":"...","deadline":"7 дней"}]} Категории: PD, ADV, CONS, FAS, RKN, LIC, FIN, IP, TECH. Выяви 10-15 рисков.`;
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
   if (!process.env.ANTHROPIC_API_KEY) {
     return res.status(500).json({ error: 'API key not configured' });
   }
-
-  const { url, legalText } = req.body || {};
-  if (!url) return res.status(400).json({ error: 'URL обязателен' });
-
-  const userMessage = legalText && legalText.trim()
-    ? `Проведи юридический аудит сайта: ${url}\n\nПредоставленный текст правовых документов:\n\n${legalText}`
-    : `Проведи полный юридический аудит сайта: ${url}`;
-
+  var body = req.body || {};
+  var url = body.url;
+  var legalText = body.legalText;
+  if (!url) {
+    return res.status(400).json({ error: 'URL required' });
+  }
+  var msg = (legalText && legalText.trim())
+    ? 'Аудит: ' + url + '\nДокументы:\n' + legalText
+    : 'Юридический аудит сайта: ' + url;
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    var response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -103,21 +27,22 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 3000,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: userMessage }]
+        system: SYSTEM,
+        messages: [{ role: 'user', content: msg }]
       })
     });
-
-    const data = await response.json();
-    if (!response.ok) return res.status(response.status).json({ error: data.error?.message || 'API error' });
-
-    const raw = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
-    const clean = raw.replace(/```(?:json)?\n?|\n?```/g, '').trim();
-    const parsed = JSON.parse(clean);
-
+    var data = await response.json();
+    if (!response.ok) {
+      return res.status(response.status).json({ error: (data.error && data.error.message) || 'API error' });
+    }
+    var raw = '';
+    for (var i = 0; i < data.content.length; i++) {
+      if (data.content[i].type === 'text') raw += data.content[i].text;
+    }
+    var clean = raw.replace(/```json/g, '').replace(/```/g, '').trim();
+    var parsed = JSON.parse(clean);
     return res.status(200).json(parsed);
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message || 'Unknown error' });
   }
 };
-}
