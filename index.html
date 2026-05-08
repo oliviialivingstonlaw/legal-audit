@@ -6,7 +6,7 @@
 <title>LegalScan — Юридический аудит сайта за 3 минуты</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -20,8 +20,8 @@
   --r:10px;--rl:14px;--rxl:20px;
   --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);
   --shadow2:0 4px 24px rgba(0,0,0,.1),0 1px 4px rgba(0,0,0,.06);
-  --font-display:'Playfair Display',serif;
-  --font-body:'Plus Jakarta Sans',sans-serif;
+  --font-display:'Source Serif 4',serif;
+  --font-body:'Manrope',sans-serif;
 }
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
 
@@ -37,6 +37,11 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-si
 .page{display:none!important}
 .page.active{display:block!important}
 .spinner{width:28px;height:28px;border:2.5px solid var(--border);border-top-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}
+
+/* Landing page fills full viewport so footer stays at bottom */
+#page-landing{display:flex!important;flex-direction:column;min-height:100vh}
+#page-landing.active{display:flex!important}
+#page-landing footer{margin-top:auto}
 
 /* ── BUTTONS ── */
 .btn{font-family:var(--font-body);cursor:pointer;border-radius:var(--r);font-size:14px;font-weight:500;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
@@ -373,11 +378,11 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
   <!-- HOW IT WORKS -->
   <section class="section">
     <div class="section-tag">Как это работает</div>
-    <div class="section-title">Три шага до полного отчёта</div>
+    <div class="section-title">Три шага до полного отчета</div>
     <div class="steps-grid">
       <div class="step-card"><div class="step-num">01</div><div class="step-title">Введите URL</div><div class="step-desc">Вставьте адрес сайта. Можно добавить текст оферты или политики конфиденциальности для более точного анализа.</div></div>
       <div class="step-card"><div class="step-num">02</div><div class="step-title">ИИ анализирует</div><div class="step-desc">Система проверяет сайт по 47 нормам — 152-ФЗ, ЗоЗПП, ФЗ-38 (ERID), ГК РФ, ФЗ-273 и другим актуальным законам 2026 года.</div></div>
-      <div class="step-card" style="border-color:var(--p);background:linear-gradient(135deg,#F8FAFF,white)"><div class="step-num" style="color:var(--p-mid)">03</div><div class="step-title">Получите отчёт</div><div class="step-desc">Карта рисков, реестр нарушений со штрафами, дорожная карта устранения и быстрые победы — всё в одном документе.</div></div>
+      <div class="step-card" style="border-color:var(--p);background:linear-gradient(135deg,#F8FAFF,white)"><div class="step-num" style="color:var(--p-mid)">03</div><div class="step-title">Получите отчет</div><div class="step-desc">Карта рисков, реестр нарушений со штрафами, дорожная карта устранения и быстрые победы — все в одном документе.</div></div>
     </div>
   </section>
 
@@ -406,11 +411,11 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
         <div class="price-name">Старт</div>
         <div class="price-desc">Один аудит для знакомства с продуктом</div>
         <div class="price-amount">990 <span style="font-size:16px;font-weight:400;color:var(--text2)">₽</span></div>
-        <div class="price-period">разовый платёж</div>
+        <div class="price-period">разовый платеж</div>
         <ul class="price-features">
           <li class="price-feat"><div class="price-feat-check">✓</div>1 аудит сайта</div></li>
           <li class="price-feat"><div class="price-feat-check">✓</div>Карта рисков</li>
-          <li class="price-feat"><div class="price-feat-check">✓</div>PDF-отчёт</li>
+          <li class="price-feat"><div class="price-feat-check">✓</div>PDF-отчет</li>
           <li class="price-feat"><div class="price-feat-check">✓</div>Хранение 30 дней</li>
         </ul>
         <button class="btn btn-outline" style="width:100%;justify-content:center" onclick="showAuth()">Начать</button>
@@ -425,7 +430,7 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
           <li class="price-feat"><div class="price-feat-check" style="background:var(--p-light);color:var(--p)">✓</div>10 аудитов в месяц</li>
           <li class="price-feat"><div class="price-feat-check" style="background:var(--p-light);color:var(--p)">✓</div>История аудитов</li>
           <li class="price-feat"><div class="price-feat-check" style="background:var(--p-light);color:var(--p)">✓</div>Трекер устранений</li>
-          <li class="price-feat"><div class="price-feat-check" style="background:var(--p-light);color:var(--p)">✓</div>Word + PDF отчёты</li>
+          <li class="price-feat"><div class="price-feat-check" style="background:var(--p-light);color:var(--p)">✓</div>Word + PDF отчеты</li>
           <li class="price-feat"><div class="price-feat-check" style="background:var(--p-light);color:var(--p)">✓</div>Консультация юриста</li>
         </ul>
         <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="showAuth()">Выбрать</button>
@@ -503,7 +508,7 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
     <div class="step-indicator" id="step-indicator" style="display:none">
       <div class="step-ind done" onclick="resetAudit()" id="sind0">1 · URL</div>
       <div class="step-ind" id="sind1">2 · Анализ</div>
-      <div class="step-ind" id="sind2">3 · Отчёт</div>
+      <div class="step-ind" id="sind2">3 · Отчет</div>
     </div>
     <div class="app-nav-right">
       <div class="site-name-tag" id="site-name-tag" style="display:none"></div>
@@ -518,7 +523,7 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
       <div class="dash-head">
         <div>
           <h2>Мои аудиты</h2>
-          <p>Все проведённые юридические проверки</p>
+          <p>Все проведенные юридические проверки</p>
         </div>
         <button class="btn btn-primary" onclick="showNewAudit()">+ Новый аудит</button>
       </div>
@@ -541,7 +546,7 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
       <div class="audit-wrap">
         <div class="audit-hero fade">
           <h2>Проверьте сайт на юридические риски</h2>
-          <p>Введите URL — получите полный отчёт по 47 нормам российского законодательства</p>
+          <p>Введите URL — получите полный отчет по 47 нормам российского законодательства</p>
         </div>
         <div class="audit-card fade2">
           <div class="audit-input-row">
@@ -919,7 +924,7 @@ function renderReport(r){
     '</div>'+
     '<div id="r-list">'+buildRiskRows(risks.slice().sort(function(a,b){return (b.score||0)-(a.score||0);}))+'</div>'+
     '<div class="export-row">'+
-    '<button class="btn btn-outline btn-sm" onclick="exportPDF()">↓ PDF-отчёт</button>'+
+    '<button class="btn btn-outline btn-sm" onclick="exportPDF()">↓ PDF-отчет</button>'+
     '<button class="btn btn-outline btn-sm" onclick="showDash()">← Все аудиты</button>'+
     '</div></div>';
 
@@ -929,7 +934,7 @@ function renderReport(r){
     '<button class="btn" style="background:#fff;color:var(--p);font-weight:600;padding:11px 20px;border-radius:var(--r);flex-shrink:0" onclick="alert(\'Свяжемся с вами!\')">Получить консультацию →</button>'+
     '</div>';
 
-  html+='<p style="text-align:center;font-size:11px;color:var(--text3);padding:20px 0">Аудит проведён с использованием ИИ-системы. Носит информационный характер.</p>';
+  html+='<p style="text-align:center;font-size:11px;color:var(--text3);padding:20px 0">Аудит проведен с использованием ИИ-системы. Носит информационный характер.</p>';
   html+='</div>';
   document.getElementById('audit-s2').innerHTML=html;
 }
@@ -948,7 +953,7 @@ function buildRiskRows(arr){
       '<div class="risk-right">'+
       '<div class="risk-fine">'+esc(risk.fine_label||'—')+'</div>'+
       '<div class="risk-fine-label">штраф</div></div></div>';
-  }).join('')+(arr.length>10?'<div style="text-align:center;padding:10px 0;font-size:13px;color:var(--text3)">+ ещё '+(arr.length-10)+' нарушений</div>':'');
+  }).join('')+(arr.length>10?'<div style="text-align:center;padding:10px 0;font-size:13px;color:var(--text3)">+ еще '+(arr.length-10)+' нарушений</div>':'');
 }
 
 function filterR(f,el){
