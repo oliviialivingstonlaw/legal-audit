@@ -39,9 +39,10 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-si
 .spinner{width:28px;height:28px;border:2.5px solid var(--border);border-top-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}
 
 /* Landing page fills full viewport so footer stays at bottom */
-#page-landing{display:flex!important;flex-direction:column;min-height:100vh}
-#page-landing.active{display:flex!important}
+#page-landing{display:flex;flex-direction:column;min-height:100vh}
 #page-landing footer{margin-top:auto}
+
+
 
 /* ── BUTTONS ── */
 .btn{font-family:var(--font-body);cursor:pointer;border-radius:var(--r);font-size:14px;font-weight:500;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
@@ -330,7 +331,7 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
 <!-- ════════════════════════════════
      LANDING
 ════════════════════════════════ -->
-<div id="page-landing" class="page active">
+<div id="page-landing" class="page active" style="display:flex">
 
   <nav class="nav">
     <div class="nav-logo" onclick="goHome()">
@@ -345,22 +346,22 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
     </div>
     <div style="display:flex;align-items:center;gap:8px">
       <button class="btn btn-outline btn-sm" onclick="showAuth()">Войти</button>
-      <button class="btn btn-primary btn-sm" onclick="showAuth()">Попробовать бесплатно</button>
+      <button class="btn btn-primary btn-sm" onclick="showAuth()">Начать аудит</button>
     </div>
   </nav>
 
   <!-- HERO -->
   <section class="hero fade">
-    <div class="hero-tag"><div class="hero-tag-dot"></div>LegalTech платформа нового поколения</div>
+    <div class="hero-tag"><div class="hero-tag-dot"></div>Юридический аудит сайтов · от 990 руб.</div>
     <h1>Узнайте правовые риски<br>вашего сайта за <em>3 минуты</em></h1>
-    <p class="hero-sub">Автоматический аудит по 47 нормам российского законодательства. Карта рисков, штрафной потенциал и план устранения — мгновенно.</p>
+    <p class="hero-sub">Автоматический аудит по 47 нормам российского законодательства. Карта рисков, штрафной потенциал и план устранения нарушений.</p>
     <div class="hero-input-wrap">
       <input class="hero-input" type="text" id="hero-url" placeholder="Введите URL вашего сайта — например https://company.ru" onkeydown="if(event.key==='Enter')heroStart()"/>
       <button class="btn btn-orange" onclick="heroStart()" style="border-radius:8px">Проверить →</button>
     </div>
     <div class="hero-trust">
-      <div class="hero-trust-item">✓ Бесплатный первый аудит</div>
-      <div class="hero-trust-item">✓ Результат за 30–60 секунд</div>
+      <div class="hero-trust-item">✓ Результат за 60 секунд</div>
+      <div class="hero-trust-item">✓ Карта рисков и план устранения</div>
       <div class="hero-trust-item">✓ 47 норм законодательства</div>
     </div>
   </section>
@@ -409,7 +410,7 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
     <div class="pricing-grid">
       <div class="price-card">
         <div class="price-name">Старт</div>
-        <div class="price-desc">Один аудит для знакомства с продуктом</div>
+        <div class="price-desc">Один полный аудит сайта</div>
         <div class="price-amount">990 <span style="font-size:16px;font-weight:400;color:var(--text2)">₽</span></div>
         <div class="price-period">разовый платеж</div>
         <ul class="price-features">
@@ -418,7 +419,7 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
           <li class="price-feat"><div class="price-feat-check">✓</div>PDF-отчет</li>
           <li class="price-feat"><div class="price-feat-check">✓</div>Хранение 30 дней</li>
         </ul>
-        <button class="btn btn-outline" style="width:100%;justify-content:center" onclick="showAuth()">Начать</button>
+        <button class="btn btn-outline" style="width:100%;justify-content:center" onclick="showAuth()">Купить за 990 руб.</button>
       </div>
       <div class="price-card featured">
         <div class="price-badge">ПОПУЛЯРНЫЙ</div>
@@ -455,8 +456,8 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
   <!-- CTA -->
   <div class="cta-section fade">
     <div class="cta-title">Проверьте сайт прямо сейчас</div>
-    <div class="cta-sub">Первый аудит бесплатно. Результат за 60 секунд.</div>
-    <button class="btn btn-orange" onclick="showAuth()" style="font-size:16px;padding:14px 32px;border-radius:var(--r)">Начать бесплатно →</button>
+    <div class="cta-sub">Результат за 60 секунд. От 990 рублей.</div>
+    <button class="btn btn-orange" onclick="showAuth()" style="font-size:16px;padding:14px 32px;border-radius:var(--r)">Начать аудит →</button>
   </div>
 
   <footer>
@@ -468,7 +469,7 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
 <!-- ════════════════════════════════
      AUTH
 ════════════════════════════════ -->
-<div id="page-auth" class="page">
+<div id="page-auth" class="page" style="display:none">
   <div class="auth-wrap">
     <div class="auth-card fade">
       <div class="auth-logo">
@@ -497,7 +498,7 @@ footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-si
 <!-- ════════════════════════════════
      APP
 ════════════════════════════════ -->
-<div id="page-app" class="page">
+<div id="page-app" class="page" style="display:none">
   <div class="app-nav">
     <div class="app-logo" onclick="showDash()">
       <div class="app-logo-mark">
@@ -615,10 +616,15 @@ sb.auth.onAuthStateChange(function(ev, session){
 
 // ── PAGE ROUTING ──
 function showPage(id){
-  ['page-landing','page-auth','page-app'].forEach(function(p){
-    document.getElementById(p).classList.remove('active');
+  var pages = ['page-landing','page-auth','page-app'];
+  pages.forEach(function(p){
+    var el = document.getElementById(p);
+    el.style.display = 'none';
+    el.classList.remove('active');
   });
-  document.getElementById(id).classList.add('active');
+  var target = document.getElementById(id);
+  target.style.display = (id === 'page-landing') ? 'flex' : 'block';
+  target.classList.add('active');
   window.scrollTo(0,0);
 }
 function showApp(){
