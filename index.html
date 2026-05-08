@@ -285,8 +285,8 @@ input::placeholder{color:#bbb}
 
 <script>
 // ── CONFIG ──
-var SUPABASE_URL = 'https://zowkxmrmqvlzbncuzhxk.supabase.co';
-var SUPABASE_ANON_KEY = 'sb_publishable_i-9PcWN89WyWVqtcfOMO4g_ifFHElUk';
+var SUPABASE_URL = 'ТВОЙ_SUPABASE_URL';
+var SUPABASE_ANON_KEY = 'ТВОЙ_SUPABASE_ANON_KEY';
 var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 var currentUser = null;
@@ -410,30 +410,69 @@ async function startScan(){
 
   var fill=document.getElementById('pfill');
   var status=document.getElementById('scanStatus');
-  var steps=['Загружаем страницы сайта','Анализируем оферту и документы','Проверяем трекеры и cookie','Сверяем с базой законодательства','Формируем карту рисков'];
-  var i=0;
-  fill.style.width='0';
-  scanInterval=setInterval(function(){
-    fill.style.width=((i+1)/steps.length*100)+'%';
-    status.textContent=steps[i];
-    i++;if(i>=steps.length)clearInterval(scanInterval);
-  },4000);
+  fill.style.width='5%';
+  status.textContent='Подключаемся к серверу...';
 
   try{
     var legalText=document.getElementById('legalText').value;
-    var res=await fetch('/api/audit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,legalText,userId:currentUser?currentUser.id:null})});
-    var data=await res.json();
-    if(!res.ok)throw new Error(data.error||'HTTP '+res.status);
-    clearInterval(scanInterval);
-    currentReport=data;
-    fill.style.width='100%';
-    status.textContent='Готово!';
-    document.getElementById('topbar-site').textContent=(data.site_name||url)+' · '+(data.audit_date||new Date().toLocaleDateString('ru-RU'));
+    var res=await fetch('/api/audit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({url:url,legalText:legalText,userId:currentUser?currentUser.id:null})
+    });
+
+    if(!res.ok){
+      var errData=await res.json();
+      throw new Error(errData.error||'HTTP '+res.status);
+    }
+
+    var reader=res.body.getReader();
+    var decoder=new TextDecoder();
+    var progress=10;
+    var result=null;
+
+    while(true){
+      var chunk=await reader.read();
+      if(chunk.done)break;
+
+      var text=decoder.decode(chunk.value,{stream:true});
+      var lines=text.split('\n');
+
+      for(var i=0;i<lines.length;i++){
+        var line=lines[i].trim();
+        if(!line.startsWith('data:'))continue;
+        var jsonStr=line.slice(5).trim();
+        if(!jsonStr)continue;
+
+        try{
+          var event=JSON.parse(jsonStr);
+          if(event.type==='status'){
+            status.textContent=event.message;
+            progress=Math.min(progress+15,90);
+            fill.style.width=progress+'%';
+          } else if(event.type==='done'){
+            result=event.data;
+            fill.style.width='100%';
+            status.textContent='Готово!';
+          } else if(event.type==='error'){
+            throw new Error(event.message);
+          }
+        }catch(parseErr){
+          // пропускаем
+        }
+      }
+    }
+
+    if(!result)throw new Error('Не получили данные от сервера');
+
+    currentReport=result;
+    document.getElementById('topbar-site').textContent=(result.site_name||url)+' · '+(result.audit_date||new Date().toLocaleDateString('ru-RU'));
     setTimeout(function(){
       goStep(2);
-      renderReport(data);
+      renderReport(result);
       loadDash();
     },500);
+
   }catch(e){
     clearInterval(scanInterval);
     goStep(0);
