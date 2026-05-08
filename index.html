@@ -317,6 +317,21 @@ textarea::placeholder{color:#94a3b8}
 .report-cta h4{font-family:'Source Serif 4',serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:3px}
 .report-cta p{font-size:12px;color:rgba(255,255,255,.7)}
 
+/* Industry selection */
+.ind-wrap{max-width:700px;margin:0 auto;padding:32px 20px}
+.ind-head{text-align:center;margin-bottom:24px}
+.ind-head h2{font-family:'Source Serif 4',serif;font-size:22px;font-weight:700;margin-bottom:6px}
+.ind-head p{font-size:14px;color:var(--slate)}
+.ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.ind-card{background:#fff;border:2px solid var(--border);border-radius:var(--rl);padding:16px;cursor:pointer;transition:all .15s;text-align:center}
+.ind-card:hover{border-color:var(--blue);background:var(--blue-l)}
+.ind-card.selected{border-color:var(--blue);background:var(--blue-l)}
+.ind-ico{font-size:26px;margin-bottom:8px}
+.ind-name{font-size:13px;font-weight:700;margin-bottom:3px;color:#0f172a}
+.ind-laws{font-size:10px;color:var(--slate);line-height:1.4}
+.ind-url-preview{background:var(--slate-l);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--slate-d);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.ind-url-preview svg{width:14px;height:14px;stroke:var(--slate);fill:none;stroke-width:2;flex-shrink:0}
+
 /* ══════════════
    RESPONSIVE
 ══════════════ */
@@ -508,8 +523,9 @@ textarea::placeholder{color:#94a3b8}
     </div>
     <div class="step-bar" id="step-bar" style="display:none">
       <div class="step-item done" onclick="goStep(0)" id="si0">1 · URL</div>
-      <div class="step-item" id="si1">2 · Анализ</div>
-      <div class="step-item" id="si2">3 · Отчет</div>
+      <div class="step-item" id="si1">2 · Отрасль</div>
+      <div class="step-item" id="si2">3 · Анализ</div>
+      <div class="step-item" id="si3">4 · Отчет</div>
     </div>
     <div class="app-bar-right">
       <div class="site-tag" id="site-tag" style="display:none"></div>
@@ -536,21 +552,21 @@ textarea::placeholder{color:#94a3b8}
     </div>
   </div>
 
-  <!-- New audit - step 0 -->
+  <!-- Step 0: URL -->
   <div id="view-audit0" class="app-view">
     <div class="audit-form-wrap fade">
       <div class="audit-form-head">
         <h2>Проверьте сайт на правовые риски</h2>
-        <p>Введите URL — получите полный отчет по 47 нормам российского законодательства</p>
+        <p>Введите URL — проведем аудит по 47+ нормам с учетом вашей отрасли</p>
       </div>
       <div class="audit-box">
         <div class="audit-row">
-          <input type="text" id="audit-url" placeholder="https://your-site.ru" onkeydown="if(event.key==='Enter')startScan()">
-          <button class="btn btn-blue" style="padding:11px 20px;font-size:15px" onclick="startScan()">Проверить →</button>
+          <input type="text" id="audit-url" placeholder="https://your-site.ru" onkeydown="if(event.key==='Enter')goToIndustry()">
+          <button class="btn btn-blue" style="padding:11px 20px;font-size:15px" onclick="goToIndustry()">Далее →</button>
         </div>
         <div class="audit-tags">
           <span class="audit-tag">152-ФЗ</span><span class="audit-tag">ERID/ОРД</span><span class="audit-tag">ЗоЗПП</span>
-          <span class="audit-tag">ГК РФ</span><span class="audit-tag">ФЗ-273</span><span class="audit-tag">+42 нормы</span>
+          <span class="audit-tag">ГК РФ</span><span class="audit-tag">+43 нормы</span>
         </div>
         <button class="toggle-docs" onclick="toggleDocs()" id="docs-btn">▼ Вставить текст правовых документов</button>
         <div id="docs-area" style="display:none;margin-top:10px">
@@ -561,19 +577,84 @@ textarea::placeholder{color:#94a3b8}
     </div>
   </div>
 
-  <!-- Step 1 scanning -->
+  <!-- Step 1: Industry selection -->
   <div id="view-audit1" class="app-view">
+    <div class="ind-wrap fade">
+      <div class="ind-head">
+        <h2>Выберите тип деятельности</h2>
+        <p>Это позволит применить специфичные нормы для вашей отрасли</p>
+      </div>
+      <div class="ind-url-preview">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span id="ind-url-show"></span>
+      </div>
+      <div class="ind-grid" id="ind-grid">
+        <div class="ind-card" onclick="selectInd(this,'ecommerce')">
+          <div class="ind-ico">🛒</div>
+          <div class="ind-name">E-commerce</div>
+          <div class="ind-laws">ФЗ-54, ЗоЗПП, ПП-612, 353-ФЗ</div>
+        </div>
+        <div class="ind-card" onclick="selectInd(this,'education')">
+          <div class="ind-ico">🎓</div>
+          <div class="ind-name">Образование</div>
+          <div class="ind-laws">ФЗ-273, лицензирование, Рособрнадзор</div>
+        </div>
+        <div class="ind-card" onclick="selectInd(this,'medicine')">
+          <div class="ind-ico">🏥</div>
+          <div class="ind-name">Медицина</div>
+          <div class="ind-laws">ФЗ-323, ФЗ-99, реклама лекарств</div>
+        </div>
+        <div class="ind-card" onclick="selectInd(this,'finance')">
+          <div class="ind-ico">💳</div>
+          <div class="ind-name">Финансы / Fintech</div>
+          <div class="ind-laws">ФЗ-395-1, ФЗ-161, ЦБ РФ, ПОД/ФТ</div>
+        </div>
+        <div class="ind-card" onclick="selectInd(this,'realestate')">
+          <div class="ind-ico">🏠</div>
+          <div class="ind-name">Недвижимость</div>
+          <div class="ind-laws">ФЗ-214, ФЗ-218, эскроу, ФЗ-135</div>
+        </div>
+        <div class="ind-card" onclick="selectInd(this,'it')">
+          <div class="ind-ico">💻</div>
+          <div class="ind-name">IT / SaaS</div>
+          <div class="ind-laws">ФЗ-149, авторское право, лицензии</div>
+        </div>
+        <div class="ind-card" onclick="selectInd(this,'tourism')">
+          <div class="ind-ico">✈️</div>
+          <div class="ind-name">Туризм</div>
+          <div class="ind-laws">ФЗ-132, фингарантии, реестр туроп.</div>
+        </div>
+        <div class="ind-card" onclick="selectInd(this,'media')">
+          <div class="ind-ico">📺</div>
+          <div class="ind-name">Медиа / Реклама</div>
+          <div class="ind-laws">ФЗ-2124-1, иноагенты, ERID</div>
+        </div>
+        <div class="ind-card" onclick="selectInd(this,'other')">
+          <div class="ind-ico">🏢</div>
+          <div class="ind-name">Другое</div>
+          <div class="ind-laws">Универсальный аудит по всем нормам</div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <button class="btn btn-blue" id="ind-next-btn" onclick="startScan()" disabled style="opacity:.4;padding:12px 32px;font-size:15px">Запустить аудит →</button>
+        <div style="margin-top:10px"><button class="btn btn-ghost btn-sm" onclick="goStep(0)">← Назад</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Scanning -->
+  <div id="view-audit2" class="app-view">
     <div class="scan-wrap fade">
       <div class="scan-ico">🔍</div>
       <div class="scan-title">Анализируем сайт</div>
       <div class="scan-msg" id="scan-msg">Подключаемся к серверу...</div>
       <div class="progress-track"><div class="progress-bar" id="prog"></div></div>
-      <div class="scan-status" id="scan-status">Проверяем 47 норм законодательства</div>
+      <div class="scan-status" id="scan-status">Проверяем нормы с учетом вашей отрасли</div>
     </div>
   </div>
 
-  <!-- Step 2 report -->
-  <div id="view-audit2" class="app-view">
+  <!-- Step 3: Report -->
+  <div id="view-audit3" class="app-view">
     <div class="report-wrap" id="report-content"></div>
   </div>
 </div>
@@ -596,6 +677,19 @@ var report = null;
 var isReg = false;
 var docsOpen = false;
 var pendingUrl = '';
+var selectedIndustry = '';
+
+var INDUSTRY_LABELS = {
+  ecommerce:   'E-commerce / Торговля',
+  education:   'Образование',
+  medicine:    'Медицина',
+  finance:     'Финансы / Fintech',
+  realestate:  'Недвижимость',
+  it:          'IT / SaaS',
+  tourism:     'Туризм',
+  media:       'Медиа / Реклама',
+  other:       'Другое'
+};
 
 // ══════════════════════════════════
 // NAVIGATION — единственная точка управления видимостью
@@ -676,7 +770,7 @@ function showMsg(txt, type) {
 // APP VIEWS
 // ══════════════════════════════════
 function showView(name) {
-  ['view-dash','view-audit0','view-audit1','view-audit2'].forEach(function(v) {
+  ['view-dash','view-audit0','view-audit1','view-audit2','view-audit3'].forEach(function(v) {
     document.getElementById(v).classList.remove('show');
   });
   document.getElementById('view-' + name).classList.add('show');
@@ -687,18 +781,40 @@ function showView(name) {
 function startNewAudit() {
   document.getElementById('audit-url').value = pendingUrl || '';
   document.getElementById('audit-err').style.display = 'none';
+  selectedIndustry = '';
   pendingUrl = '';
   goStep(0);
 }
 
 function goStep(n) {
-  ['si0','si1','si2'].forEach(function(s, i) {
+  ['si0','si1','si2','si3'].forEach(function(s, i) {
     var el = document.getElementById(s);
     el.className = 'step-item' + (i === n ? ' active' : i < n ? ' done' : '');
   });
   if (n === 0) showView('audit0');
   if (n === 1) showView('audit1');
   if (n === 2) showView('audit2');
+  if (n === 3) showView('audit3');
+}
+
+function goToIndustry() {
+  var url = document.getElementById('audit-url').value.trim();
+  if (!url) { showErr('Введите URL сайта'); return; }
+  document.getElementById('audit-err').style.display = 'none';
+  document.getElementById('ind-url-show').textContent = url;
+  selectedIndustry = '';
+  document.querySelectorAll('.ind-card').forEach(function(c) { c.classList.remove('selected'); });
+  var btn = document.getElementById('ind-next-btn');
+  btn.disabled = true; btn.style.opacity = '.4';
+  goStep(1);
+}
+
+function selectInd(el, key) {
+  document.querySelectorAll('.ind-card').forEach(function(c) { c.classList.remove('selected'); });
+  el.classList.add('selected');
+  selectedIndustry = key;
+  var btn = document.getElementById('ind-next-btn');
+  btn.disabled = false; btn.style.opacity = '1';
 }
 
 // ══════════════════════════════════
@@ -734,7 +850,7 @@ async function loadDash() {
 }
 
 async function openAudit(id) {
-  goStep(2);
+  goStep(3);
   document.getElementById('report-content').innerHTML =
     '<div style="text-align:center;padding:60px"><div class="spinner" style="margin:0 auto"></div></div>';
   try {
@@ -775,19 +891,25 @@ async function startScan() {
   var url = document.getElementById('audit-url').value.trim();
   if (!url) { showErr('Введите URL сайта'); return; }
   document.getElementById('audit-err').style.display = 'none';
-  goStep(1);
+  goStep(2);
   setSiteTag(url);
 
   var prog = document.getElementById('prog');
   var msg  = document.getElementById('scan-msg');
   prog.style.width = '5%';
+  msg.textContent = 'Анализируем ' + (INDUSTRY_LABELS[selectedIndustry] || 'сайт') + '...';
 
   try {
     var legalText = document.getElementById('legal-text').value;
     var res = await fetch('/api/audit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: url, legalText: legalText, userId: user ? user.id : null })
+      body: JSON.stringify({
+        url: url,
+        legalText: legalText,
+        industry: selectedIndustry || 'other',
+        userId: user ? user.id : null
+      })
     });
 
     if (!res.ok) {
@@ -831,13 +953,13 @@ async function startScan() {
     setSiteTag(result.site_name || url);
 
     setTimeout(function() {
-      goStep(2);
+      goStep(3);
       renderReport(result);
       loadDash();
     }, 500);
 
   } catch(e) {
-    goStep(0);
+    goStep(1);
     showErr(e.message);
   }
 }
