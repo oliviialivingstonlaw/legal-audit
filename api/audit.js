@@ -13,6 +13,7 @@ module.exports = async function handler(req, res) {
   if (!url) {
     return res.status(400).json({ error: 'URL required' });
   }
+  var systemPrompt = 'ВАЖНО: Твой ответ должен начинаться с символа { и заканчиваться символом }. Никакого текста до или после JSON. ' + SYSTEM;
   var msg = (legalText && legalText.trim())
     ? 'Аудит: ' + url + '\nДокументы:\n' + legalText
     : 'Юридический аудит сайта: ' + url;
@@ -27,7 +28,7 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 8000,
-        system: SYSTEM,
+        system: systemPrompt,
         messages: [{ role: 'user', content: msg }]
       })
     });
