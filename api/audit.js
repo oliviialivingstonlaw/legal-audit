@@ -14,9 +14,10 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'URL required' });
   }
   var systemPrompt = 'ВАЖНО: Твой ответ должен начинаться с символа { и заканчиваться символом }. Никакого текста до или после JSON. ' + SYSTEM;
-  var msg = (legalText && legalText.trim())
-    ? 'Аудит: ' + url + '\nДокументы:\n' + legalText
-    : 'Юридический аудит сайта: ' + url;
+  var today = new Date().toLocaleDateString('ru-RU');
+var msg = (legalText && legalText.trim())
+    ? 'Аудит: ' + url + '\nДата сегодня: ' + today + '\nДокументы:\n' + legalText
+    : 'Юридический аудит сайта: ' + url + '\nДата сегодня: ' + today;
   try {
     var response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
