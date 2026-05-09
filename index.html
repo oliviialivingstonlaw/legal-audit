@@ -1463,9 +1463,11 @@ async function startScan() {
     if (!res.ok) { var et=await res.text(); var em='HTTP '+res.status; try{var ed=JSON.parse(et);em=ed.error||em;}catch(e2){} throw new Error(em); }
 
     var reader=res.body.getReader(), decoder=new TextDecoder(), result=null, pct=10, apiErr=null;
+    var buf='';
     while (true) {
       var chunk=await reader.read(); if (chunk.done) break;
-      var lines=decoder.decode(chunk.value,{stream:true}).split('\n');
+      buf+=decoder.decode(chunk.value,{stream:true});
+      var lines=buf.split('\n'); buf=lines.pop();
       for (var i=0;i<lines.length;i++) {
         var line=lines[i].trim(); if (!line.startsWith('data:')) continue;
         var js=line.slice(5).trim(); if (!js) continue;
@@ -1476,6 +1478,7 @@ async function startScan() {
         } catch(pe) {}
       }
     }
+    if (buf.trim().startsWith('data:')) { try{var ev2=JSON.parse(buf.trim().slice(5).trim());if(ev2.type==='done')result=ev2.data;if(ev2.type==='error')apiErr=ev2.message;}catch(e){} }
     if (apiErr) throw new Error(apiErr);
     if (!result) throw new Error('Не получили данные от сервера');
     report=result; setSiteTag(result.site_name||url);
@@ -1987,12 +1990,16 @@ async function startGenDoc() {
 
     var reader = res.body.getReader(), decoder = new TextDecoder();
     var result = null, pct = 10, apiErr = null;
+    var buffer = ''; // буфер для неполных строк
 
     while (true) {
       var chunk = await reader.read(); if (chunk.done) break;
-      var lines = decoder.decode(chunk.value, { stream:true }).split('\n');
+      buffer += decoder.decode(chunk.value, { stream: true });
+      var lines = buffer.split('\n');
+      buffer = lines.pop(); // последняя неполная строка остаётся в буфере
       for (var i = 0; i < lines.length; i++) {
-        var line = lines[i].trim(); if (!line.startsWith('data:')) continue;
+        var line = lines[i].trim();
+        if (!line.startsWith('data:')) continue;
         var js = line.slice(5).trim(); if (!js) continue;
         try {
           var ev = JSON.parse(js);
@@ -2001,6 +2008,10 @@ async function startGenDoc() {
           else if (ev.type === 'error') { apiErr = ev.message; }
         } catch(pe) {}
       }
+    }
+    // обрабатываем остаток буфера
+    if (buffer.trim().startsWith('data:')) {
+      try { var ev2 = JSON.parse(buffer.trim().slice(5).trim()); if (ev2.type==='done') result=ev2.data; if (ev2.type==='error') apiErr=ev2.message; } catch(e) {}
     }
 
     if (apiErr) throw new Error(apiErr);
