@@ -452,7 +452,11 @@ function refreshCurrent() {
 // ══════════════════════════════════
 async function crmFetch(path, opts) {
   var r = await fetch(path, Object.assign({ headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + currentToken } }, opts));
-  return await r.json();
+  var text = await r.text();
+  try { var data = JSON.parse(text); }
+  catch(e) { throw new Error('Сервер вернул ошибку ' + r.status + '. Проверь что ADMIN_EMAIL добавлен в Vercel и совпадает с твоим email: ' + currentUser.email); }
+  if (!r.ok && data.error) throw new Error(data.error);
+  return data;
 }
 
 // ══════════════════════════════════
