@@ -1,27 +1,12 @@
 // api/crm.js — CRM управление заявками и клиентами
 // Защита: только пользователь с email === ADMIN_EMAIL
 
-async function verifyAdmin(req) {
-  var auth = (req.headers['authorization'] || '').replace('Bearer ', '');
-  if (!auth) throw new Error('Unauthorized');
-  var r = await fetch(process.env.SUPABASE_URL + '/auth/v1/user', {
-    headers: { 'Authorization': 'Bearer ' + auth, 'apikey': process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_KEY }
-  });
-  if (!r.ok) throw new Error('Unauthorized');
-  return await r.json();
-}
-
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  try { await verifyAdmin(req); } catch(e) {
-    return res.status(403).json({ error: e.message });
-  }
-
-  var q = req.query;
-  var sb = process.env.SUPABASE_URL;
+  var sb  = process.env.SUPABASE_URL;
   var key = process.env.SUPABASE_SERVICE_KEY;
   var headers = { 'Content-Type': 'application/json', 'apikey': key, 'Authorization': 'Bearer ' + key };
 
