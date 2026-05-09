@@ -31,13 +31,24 @@ module.exports = async function handler(req, res) {
     var response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 4000, messages: [{ role: 'user', content: buildPrompt(body.docType, d) }] })
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 2000, messages: [{ role: 'user', content: buildPrompt(body.docType, d) }] })
     });
 
     if (!response.ok) { var ed = await response.json(); return res.status(500).json({ error: (ed.error && ed.error.message) || 'API error ' + response.status }); }
 
     var result = await response.json();
-    var html = (result.content && result.content[0] && result.content[0].text) || '';
+    console.log('API result keys:', Object.keys(result));
+    console.log('Content blocks:', result.content ? result.content.length : 0);
+    var html = '';
+    if (result.content && Array.isArray(result.content)) {
+      for (var i = 0; i < result.content.length; i++) {
+        if (result.content[i].type === 'text') html += result.content[i].text;
+      }
+    }
+    if (!html) {
+      console.error('Empty html, result:', JSON.stringify(result).substring(0, 300));
+      return res.status(500).json({ error: 'Модель вернула пустой ответ. stop_reason: ' + (result.stop_reason||'unknown') });
+    }
 
     return res.json({
       ok: true,
