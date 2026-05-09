@@ -1,6 +1,3 @@
-// api/company.js — Проверка компании по ИНН
-// Использует DaData если есть ключ, иначе открытый API ФНС (egrul.nalog.ru)
-
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -12,10 +9,9 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'ИНН должен содержать 10 или 12 цифр' });
   }
 
-  // Определяем тип: ЮЛ или ИП
-  var isIP = inn.length === 12;
+  var key = process.env.DADATA_API_KEY;
+  if (!key) return res.status(500).json({ error: 'DADATA_API_KEY не настроен в Vercel' });
 
-  // INDUSTRY по первым 2 цифрам ОКВЭД — определяем ниже после получения данных
   function detectIndustry(okved) {
     if (!okved) return 'other';
     var n = parseInt((okved || '').substring(0, 2));
@@ -36,92 +32,54 @@ module.exports = async function handler(req, res) {
     tourism:'Туризм', media:'Медиа', other:'Другое'
   };
 
-  // Пробуем DaData если есть ключ
-  var dadataKey = process.env.DADATA_API_KEY;
-  if (dadataKey) {
-    try {
-      var r = await fetch('https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Token ' + dadataKey,
-          'X-Secret': process.env.DADATA_SECRET_KEY || ''
-        },
-        body: JSON.stringify({ query: inn, count: 1 })
-      });
-      if (r.ok) {
-        var data = await r.json();
-        if (data.suggestions && data.suggestions.length) {
-          var s = data.suggestions[0], d = s.data;
-          var okved = d.okved || '';
-          var industry = detectIndustry(okved);
-          return res.json({
-            found: true, source: 'dadata',
-            inn: d.inn, kpp: d.kpp || null, ogrn: d.ogrn || null,
-            name_full: (d.name && d.name.full_with_opf) || s.value,
-            name_short: (d.name && d.name.short_with_opf) || s.value,
-            legal_form: (d.opf && d.opf.short) || '',
-            address: (d.address && d.address.value) || '',
-            director: (d.management && d.management.name) || null,
-            director_post: (d.management && d.management.post) || null,
-            okved, okved_name: d.okved_type || '',
-            industry_suggested: industry,
-            industry_label: INDUSTRY_LABELS[industry],
-            status: d.state && d.state.status === 'ACTIVE' ? 'active' : 'inactive',
-            status_label: d.state && d.state.status === 'ACTIVE' ? 'Действующая' : 'Недействующая',
-            reg_date: d.state && d.state.registration_date
-              ? new Date(d.state.registration_date).toLocaleDateString('ru-RU') : null
-          });
-        }
-        return res.json({ found: false, inn });
-      }
-    } catch(e) { /* fallback to nalog */ }
-  }
-
-  // Fallback: открытый API nalog.ru (ЕГРЮЛ/ЕГРИП)
   try {
-    var url = isIP
-      ? 'https://egrul.nalog.ru/search-result/' + inn
-      : 'https://egrul.nalog.ru/search-result/' + inn;
-
-    // Используем публичный поиск nalog.ru
-    var searchR = await fetch('https://egrul.nalog.ru/search-result/' + inn, {
-      headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
+    var r = await fetch('https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Token ' + key
+      },
+      body: JSON.stringify({ query: inn, count: 1 })
     });
 
-    if (searchR.ok) {
-      var text = await searchR.text();
-      try {
-        var json = JSON.parse(text);
-        if (json.rows && json.rows.length) {
-          var row = json.rows[0];
-          var industry2 = detectIndustry(row.k || '');
-          return res.json({
-            found: true, source: 'nalog',
-            inn: row.i || inn,
-            kpp: row.p || null,
-            ogrn: row.o || null,
-            name_full: row.n || '',
-            name_short: row.c || row.n || '',
-            legal_form: isIP ? 'ИП' : 'Юридическое лицо',
-            address: row.a || '',
-            director: null, director_post: null,
-            okved: row.k || '',
-            okved_name: '',
-            industry_suggested: industry2,
-            industry_label: INDUSTRY_LABELS[industry2],
-            status: row.e ? 'inactive' : 'active',
-            status_label: row.e ? 'Ликвидирована' : 'Действующая',
-            reg_date: null
-          });
-        }
-      } catch(pe) {}
+    var text = await r.text();
+
+    if (!r.ok) {
+      return res.status(500).json({ error: 'DaData HTTP ' + r.status + ': ' + text.substring(0, 200) });
     }
 
-    // Если ничего не нашли
-    return res.json({ found: false, inn });
+    var data;
+    try { data = JSON.parse(text); } catch(e) {
+      return res.status(500).json({ error: 'DaData вернул не JSON: ' + text.substring(0, 200) });
+    }
+
+    if (!data.suggestions || !data.suggestions.length) {
+      return res.json({ found: false, inn, debug: 'DaData вернул 0 результатов' });
+    }
+
+    var s = data.suggestions[0], d = s.data;
+    var okved = d.okved || '';
+    var industry = detectIndustry(okved);
+    var isActive = d.state && d.state.status === 'ACTIVE';
+
+    return res.json({
+      found: true,
+      inn: d.inn, kpp: d.kpp || null, ogrn: d.ogrn || null,
+      name_full: (d.name && d.name.full_with_opf) || s.value,
+      name_short: (d.name && d.name.short_with_opf) || s.value,
+      legal_form: (d.opf && d.opf.short) || '',
+      address: (d.address && d.address.value) || '',
+      director: (d.management && d.management.name) || null,
+      okved, industry_suggested: industry,
+      industry_label: INDUSTRY_LABELS[industry],
+      status: isActive ? 'active' : 'inactive',
+      status_label: isActive ? 'Действующая' : 'Недействующая',
+      reg_date: d.state && d.state.registration_date
+        ? new Date(d.state.registration_date).toLocaleDateString('ru-RU') : null
+    });
 
   } catch(e) {
-    return res.status(500).json({ error: 'Ошибка запроса к реестру: ' + e.message });
+    return res.status(500).json({ error: 'Сетевая ошибка: ' + e.message });
   }
 };
