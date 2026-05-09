@@ -1,1 +1,1 @@
-{"functions":{"api/audit.js":{"maxDuration":60}}}
+{"functions":{"api/audit.js":{"maxDuration":300},"api/analyze-doc.js":{"maxDuration":300}}}
