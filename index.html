@@ -1917,11 +1917,24 @@ async function genAutoFill() {
       hint.style.color = 'var(--amber)';
       hint.textContent = '⚠ ' + d.error;
     } else if (d.found) {
+      // Заполняем все доступные поля
       if (d.name_short) document.getElementById('gen-company').value = d.name_short;
-      if (d.address) document.getElementById('gen-address').value = d.address;
-      if (d.industry_suggested) document.getElementById('gen-industry').value = d.industry_suggested;
+      if (d.address)    document.getElementById('gen-address').value = d.address;
+      if (d.industry_suggested && d.industry_suggested !== 'other') {
+        document.getElementById('gen-industry').value = d.industry_suggested;
+      }
+      // Заполняем email если есть в профиле
+      if (!document.getElementById('gen-email').value && user && user.email) {
+        document.getElementById('gen-email').value = user.email;
+      }
+      var filled = [];
+      if (d.name_short) filled.push('название');
+      if (d.address)    filled.push('адрес');
+      if (d.industry_suggested && d.industry_suggested !== 'other') filled.push('отрасль');
       hint.style.color = 'var(--green)';
-      hint.textContent = '✓ ' + (d.name_full || '') + (d.status_label ? ' · ' + d.status_label : '');
+      hint.textContent = '✓ ' + (d.name_full || d.name_short || inn) +
+        (d.status_label ? ' · ' + d.status_label : '') +
+        (filled.length ? ' · Заполнено: ' + filled.join(', ') : '');
     } else {
       hint.style.color = 'var(--amber)';
       hint.textContent = '⚠ Компания с ИНН ' + inn + ' не найдена в реестре';
