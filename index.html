@@ -1901,19 +1901,36 @@ function selDocType(el, type) {
 
 async function genAutoFill() {
   var inn = document.getElementById('gen-inn').value.trim();
-  if (!inn || (inn.length !== 10 && inn.length !== 12)) return;
+  var hint = document.getElementById('gen-inn-hint');
+  if (!inn || (inn.length !== 10 && inn.length !== 12)) {
+    hint.style.color = 'var(--amber)';
+    hint.textContent = '⚠ Введите 10 цифр (юрлицо) или 12 цифр (ИП)';
+    hint.style.display = 'block'; return;
+  }
+  hint.style.color = 'var(--slate)';
+  hint.textContent = 'Запрашиваем данные...';
+  hint.style.display = 'block';
   try {
     var r = await fetch('/api/company', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ inn }) });
     var d = await r.json();
-    if (d.found) {
+    if (d.error) {
+      hint.style.color = 'var(--amber)';
+      hint.textContent = '⚠ ' + d.error;
+    } else if (d.found) {
       if (d.name_short) document.getElementById('gen-company').value = d.name_short;
       if (d.address) document.getElementById('gen-address').value = d.address;
       if (d.industry_suggested) document.getElementById('gen-industry').value = d.industry_suggested;
-      var hint = document.getElementById('gen-inn-hint');
+      hint.style.color = 'var(--green)';
       hint.textContent = '✓ ' + (d.name_full || '') + (d.status_label ? ' · ' + d.status_label : '');
-      hint.style.display = 'block';
+    } else {
+      hint.style.color = 'var(--amber)';
+      hint.textContent = '⚠ Компания с ИНН ' + inn + ' не найдена в реестре';
     }
-  } catch(e) {}
+  } catch(e) {
+    hint.style.color = 'var(--red)';
+    hint.textContent = '⚠ Ошибка соединения: ' + e.message;
+  }
+  hint.style.display = 'block';
 }
 
 async function startGenDoc() {
