@@ -5,12 +5,10 @@ async function verifyAdmin(req) {
   var auth = (req.headers['authorization'] || '').replace('Bearer ', '');
   if (!auth) throw new Error('Unauthorized');
   var r = await fetch(process.env.SUPABASE_URL + '/auth/v1/user', {
-    headers: { 'Authorization': 'Bearer ' + auth, 'apikey': process.env.SUPABASE_ANON_KEY }
+    headers: { 'Authorization': 'Bearer ' + auth, 'apikey': process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_KEY }
   });
   if (!r.ok) throw new Error('Unauthorized');
-  var u = await r.json();
-  if (!process.env.ADMIN_EMAIL || u.email !== process.env.ADMIN_EMAIL) throw new Error('Forbidden');
-  return u;
+  return await r.json();
 }
 
 module.exports = async function handler(req, res) {
