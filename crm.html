@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LegalScan CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Manrope',sans-serif;font-size:14px;color:#0f172a;background:#f1f5f9;-webkit-font-smoothing:antialiased}
+:root{
+  --blue:#2563eb;--blue-d:#1d4ed8;--blue-l:#eff6ff;--blue-m:#bfdbfe;
+  --green:#16a34a;--green-l:#f0fdf4;--green-m:#bbf7d0;
+  --red:#dc2626;--red-l:#fef2f2;--red-m:#fecaca;
+  --amber:#d97706;--amber-l:#fffbeb;--amber-m:#fde68a;
+  --purple:#7c3aed;--purple-l:#f5f3ff;
+  --slate:#64748b;--slate-l:#f1f5f9;--slate-m:#e2e8f0;--slate-d:#334155;
+  --border:#e2e8f0;--surface:#fff;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 4px 12px rgba(0,0,0,.04);
+  --shadow-lg:0 4px 24px rgba(0,0,0,.1);
+  --r:8px;--rl:12px;
+}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade{animation:fadein .3s ease both}
+.spinner{width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:5px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;padding:8px 16px;border-radius:var(--r);border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue-d)}
+.btn-white{background:#fff;color:var(--slate-d);border:1.5px solid var(--border)}
+.btn-white:hover{border-color:var(--blue);color:var(--blue)}
+.btn-sm{padding:5px 11px;font-size:12px}
+.btn-ghost{background:none;border:none;color:var(--slate);cursor:pointer;font-family:inherit;font-size:13px;padding:5px 8px;border-radius:var(--r)}
+.btn-ghost:hover{background:var(--slate-l);color:var(--slate-d)}
+
+/* INPUT */
+input[type=text],input[type=email],input[type=tel],input[type=password],textarea,select{
+  font-family:'Manrope',sans-serif;font-size:13px;color:#0f172a;
+  background:#fff;border:1.5px solid var(--border);border-radius:var(--r);
+  padding:8px 12px;width:100%;outline:none;transition:border-color .15s
+}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+input::placeholder,textarea::placeholder{color:#94a3b8}
+select{cursor:pointer}
+textarea{resize:vertical}
+
+/* SIDEBAR */
+.layout{display:flex;min-height:100vh}
+.sidebar{width:220px;background:#0f172a;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{display:flex;align-items:center;gap:9px;padding:18px 16px 14px;border-bottom:1px solid #1e293b}
+.sidebar-logo-icon{width:28px;height:28px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.sidebar-logo-icon svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.sidebar-logo-name{font-size:15px;font-weight:700;color:#fff}
+.sidebar-logo-badge{font-size:9px;font-weight:700;background:var(--blue);color:#fff;padding:1px 6px;border-radius:10px;margin-left:2px}
+.sidebar-nav{padding:10px 8px;flex:1}
+.nav-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#475569;padding:10px 8px 5px;margin-top:6px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--r);color:#94a3b8;cursor:pointer;transition:all .15s;margin-bottom:2px;font-weight:500}
+.nav-item:hover{background:#1e293b;color:#e2e8f0}
+.nav-item.active{background:var(--blue);color:#fff}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:#dc2626;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px}
+.sidebar-footer{padding:12px 16px;border-top:1px solid #1e293b;font-size:11px;color:#64748b}
+
+/* MAIN */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{background:#fff;border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:40}
+.topbar-title{font-size:15px;font-weight:700;color:#0f172a}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.content{padding:20px;flex:1}
+
+/* VIEW */
+.view{display:none}
+.view.show{display:block}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px;box-shadow:var(--shadow)}
+.stat-val{font-family:'Source Serif 4',serif;font-size:30px;font-weight:700;line-height:1;margin-bottom:4px}
+.stat-label{font-size:12px;color:var(--slate);font-weight:500}
+.stat-sub{font-size:11px;color:#94a3b8;margin-top:2px}
+
+/* TABLE */
+.table-card{background:#fff;border:1px solid var(--border);border-radius:var(--rl);box-shadow:var(--shadow);overflow:hidden}
+.table-header{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
+.table-title{font-size:14px;font-weight:700}
+.table-filters{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--slate-d);transition:all .15s;font-family:inherit}
+.filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.table-search{flex:1;min-width:180px}
+.table-search input{font-size:13px;padding:6px 12px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--slate);padding:10px 18px;background:#fafafa;border-bottom:1px solid var(--border)}
+.tbl td{padding:12px 18px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#fafafa}
+.tbl-name{font-weight:600;font-size:13px;margin-bottom:2px}
+.tbl-sub{font-size:12px;color:var(--slate)}
+.tbl-contact{font-size:12px;color:var(--slate)}
+.tbl-contact a{color:var(--blue);text-decoration:none}
+
+/* STATUS BADGES */
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.s-new{background:#f0f9ff;color:#0369a1}
+.s-active{background:var(--amber-l);color:var(--amber)}
+.s-proposal{background:var(--purple-l);color:var(--purple)}
+.s-closed{background:var(--green-l);color:var(--green)}
+.s-rejected{background:var(--slate-l);color:var(--slate)}
+.risk-high{background:var(--red-l);color:var(--red)}
+.risk-med{background:var(--amber-l);color:var(--amber)}
+.risk-low{background:var(--green-l);color:var(--green)}
+
+/* LEAD DRAWER */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none}
+.drawer-overlay.show{display:block}
+.drawer{position:fixed;right:0;top:0;height:100%;width:420px;background:#fff;box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:201;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease}
+.drawer.show{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.drawer-title{font-size:15px;font-weight:700}
+.drawer-body{flex:1;overflow-y:auto;padding:20px}
+.drawer-section{margin-bottom:18px}
+.drawer-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin-bottom:8px}
+.drawer-field{background:var(--slate-l);border-radius:var(--r);padding:10px 12px;font-size:13px;color:#0f172a;margin-bottom:6px}
+.drawer-field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--slate);margin-bottom:3px}
+.status-select{width:100%;font-size:13px;font-weight:600;border-radius:var(--r)}
+.timeline-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9}
+.timeline-item:last-child{border-bottom:none}
+.timeline-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:5px}
+.timeline-text{font-size:12px;color:var(--slate-d);line-height:1.5}
+.timeline-date{font-size:11px;color:#94a3b8;margin-top:2px}
+
+/* COMPANY CHECKER */
+.company-card{background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:24px;box-shadow:var(--shadow);margin-top:16px}
+.company-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.company-icon{width:52px;height:52px;border-radius:12px;background:var(--blue-l);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.company-name{font-family:'Source Serif 4',serif;font-size:18px;font-weight:700;margin-bottom:4px}
+.company-inn{font-size:12px;color:var(--slate)}
+.company-status-active{display:inline-flex;align-items:center;gap:5px;background:var(--green-l);color:var(--green);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.company-status-inactive{display:inline-flex;align-items:center;gap:5px;background:var(--red-l);color:var(--red);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.company-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.company-field{background:var(--slate-l);border-radius:var(--r);padding:10px 12px}
+.company-field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--slate);margin-bottom:3px}
+.company-field-value{font-size:13px;font-weight:600;color:#0f172a}
+.company-okved{background:var(--blue-l);border:1px solid var(--blue-m);border-radius:var(--r);padding:10px 14px;margin-top:12px}
+.industry-suggestion{background:linear-gradient(135deg,var(--blue),var(--blue-d));border-radius:var(--rl);padding:16px 18px;margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.inn-form{display:flex;gap:8px;max-width:500px}
+.inn-form input{font-size:15px;padding:11px 16px}
+.err-box{background:var(--red-l);border:1px solid var(--red-m);border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--red);margin-top:10px;display:none}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:60px 20px;color:var(--slate)}
+.empty-icon{font-size:36px;margin-bottom:12px}
+
+/* LOGIN */
+#pg-login{min-height:100vh;background:var(--slate-l);display:flex;align-items:center;justify-content:center}
+.login-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:32px;width:360px;box-shadow:var(--shadow-lg)}
+.login-logo{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:24px}
+.login-title{font-size:20px;font-weight:700;text-align:center;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--slate);text-align:center;margin-bottom:22px}
+.auth-msg{border-radius:var(--r);padding:10px;font-size:13px;margin-top:10px;display:none;text-align:center}
+.auth-msg.err{background:var(--red-l);color:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="pg-login">
+  <div class="login-card fade">
+    <div class="login-logo">
+      <div class="sidebar-logo-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+      <span style="font-size:18px;font-weight:800;color:#0f172a">LegalScan <span style="color:var(--blue)">CRM</span></span>
+    </div>
+    <div class="login-title">Вход в панель</div>
+    <div class="login-sub">Только для сотрудников ООО «ЛегалСкан»</div>
+    <div style="margin-bottom:12px"><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--slate);display:block;margin-bottom:5px">Email</label><input type="email" id="l-email" placeholder="admin@legalscan.ru" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div style="margin-bottom:14px"><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--slate);display:block;margin-bottom:5px">Пароль</label><input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn btn-blue" style="width:100%;justify-content:center;padding:11px" onclick="doLogin()">Войти</button>
+    <div class="auth-msg" id="l-msg"></div>
+  </div>
+</div>
+
+<!-- CRM APP -->
+<div id="pg-crm" style="display:none">
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+        <span class="sidebar-logo-name">LegalScan</span>
+        <span class="sidebar-logo-badge">CRM</span>
+      </div>
+      <div class="sidebar-nav">
+        <div class="nav-section">Основное</div>
+        <div class="nav-item active" onclick="showView('dashboard')" id="nav-dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Обзор
+        </div>
+        <div class="nav-item" onclick="showView('leads')" id="nav-leads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Заявки
+          <span class="nav-badge" id="nav-new-count" style="display:none">0</span>
+        </div>
+        <div class="nav-item" onclick="showView('audits')" id="nav-audits">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Аудиты
+        </div>
+        <div class="nav-section">Инструменты</div>
+        <div class="nav-item" onclick="showView('company')" id="nav-company">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Проверка компании
+        </div>
+        <div class="nav-section">Аккаунт</div>
+        <div class="nav-item" onclick="doLogout()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Выйти
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div style="font-weight:600;color:#e2e8f0" id="admin-name">Администратор</div>
+        <div>ООО «ЛегалСкан»</div>
+        <div style="margin-top:4px"><a href="/" style="color:var(--blue-m);text-decoration:none;font-size:10px">← На сайт</a></div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <div class="topbar-title" id="topbar-title">Обзор</div>
+        <div class="topbar-right">
+          <div style="font-size:12px;color:var(--slate)" id="topbar-date"></div>
+          <button class="btn btn-white btn-sm" onclick="refreshCurrent()">↺ Обновить</button>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- DASHBOARD -->
+        <div id="view-dashboard" class="view show">
+          <div id="stats-loading" style="text-align:center;padding:40px"><div class="spinner" style="margin:0 auto"></div></div>
+          <div id="stats-content" style="display:none">
+            <div class="stats-row">
+              <div class="stat-card">
+                <div class="stat-val" id="s-leads-today" style="color:var(--blue)">—</div>
+                <div class="stat-label">Новых заявок сегодня</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-val" id="s-leads-new" style="color:var(--amber)">—</div>
+                <div class="stat-label">Необработанных заявок</div>
+                <div class="stat-sub">Требуют ответа</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-val" id="s-audits-today" style="color:var(--green)">—</div>
+                <div class="stat-label">Аудитов сегодня</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-val" id="s-conversion" style="color:var(--purple)">—%</div>
+                <div class="stat-label">Конверсия в сделку</div>
+                <div class="stat-sub">Заявки → Закрытые</div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div class="table-card">
+                <div class="table-header"><div class="table-title">Последние заявки</div><button class="btn btn-white btn-sm" onclick="showView('leads')">Все →</button></div>
+                <div id="dash-leads-list" style="padding:0 18px 10px"></div>
+              </div>
+              <div class="table-card">
+                <div class="table-header"><div class="table-title">Последние аудиты</div><button class="btn btn-white btn-sm" onclick="showView('audits')">Все →</button></div>
+                <div id="dash-audits-list" style="padding:0 18px 10px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LEADS -->
+        <div id="view-leads" class="view">
+          <div class="table-card">
+            <div class="table-header">
+              <div class="table-title">Заявки</div>
+              <div class="table-filters">
+                <button class="filter-btn active" onclick="filterLeads('all',this)">Все</button>
+                <button class="filter-btn" onclick="filterLeads('new',this)">Новые</button>
+                <button class="filter-btn" onclick="filterLeads('active',this)">В работе</button>
+                <button class="filter-btn" onclick="filterLeads('proposal',this)">КП отправлено</button>
+                <button class="filter-btn" onclick="filterLeads('closed',this)">Закрыты</button>
+                <button class="filter-btn" onclick="filterLeads('rejected',this)">Отказ</button>
+              </div>
+              <div class="table-search"><input type="text" placeholder="Поиск по имени, email, компании..." oninput="searchLeads(this.value)"></div>
+            </div>
+            <div id="leads-loading" style="text-align:center;padding:40px"><div class="spinner" style="margin:0 auto"></div></div>
+            <div id="leads-table-wrap" style="display:none;overflow-x:auto">
+              <table class="tbl">
+                <thead><tr>
+                  <th>Контакт</th>
+                  <th>Запрос</th>
+                  <th>Источник</th>
+                  <th>Статус</th>
+                  <th>Дата</th>
+                  <th></th>
+                </tr></thead>
+                <tbody id="leads-tbody"></tbody>
+              </table>
+            </div>
+            <div id="leads-empty" class="empty-state" style="display:none">
+              <div class="empty-icon">📋</div>
+              <div>Заявок не найдено</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AUDITS -->
+        <div id="view-audits" class="view">
+          <div class="table-card">
+            <div class="table-header">
+              <div class="table-title">История аудитов</div>
+              <div class="table-search"><input type="text" placeholder="Поиск по URL или сайту..." oninput="searchAudits(this.value)"></div>
+            </div>
+            <div id="audits-loading" style="text-align:center;padding:40px"><div class="spinner" style="margin:0 auto"></div></div>
+            <div id="audits-table-wrap" style="display:none;overflow-x:auto">
+              <table class="tbl">
+                <thead><tr>
+                  <th>Сайт</th>
+                  <th>Дата</th>
+                  <th>Риск</th>
+                  <th>Критичных</th>
+                  <th>Важных</th>
+                  <th>Макс. штраф</th>
+                </tr></thead>
+                <tbody id="audits-tbody"></tbody>
+              </table>
+            </div>
+            <div id="audits-empty" class="empty-state" style="display:none">
+              <div class="empty-icon">🔍</div>
+              <div>Аудитов не найдено</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMPANY CHECKER -->
+        <div id="view-company" class="view">
+          <div style="max-width:640px">
+            <div style="margin-bottom:20px">
+              <div style="font-family:'Source Serif 4',serif;font-size:22px;font-weight:700;margin-bottom:6px">Проверка компании по ИНН</div>
+              <div style="font-size:14px;color:var(--slate)">Данные из ЕГРЮЛ/ЕГРИП через DaData (агрегатор ФНС). Автоматическое определение отрасли по ОКВЭД.</div>
+            </div>
+            <div class="inn-form">
+              <input type="text" id="inn-input" placeholder="Введите ИНН — 10 цифр (юрлицо) или 12 (ИП)" maxlength="12" oninput="this.value=this.value.replace(/\D/g,'')" onkeydown="if(event.key==='Enter')checkCompany()">
+              <button class="btn btn-blue" onclick="checkCompany()" id="inn-btn" style="flex-shrink:0;padding:11px 20px">Проверить →</button>
+            </div>
+            <div class="err-box" id="inn-err"></div>
+            <div id="inn-loading" style="text-align:center;padding:30px;display:none"><div class="spinner" style="margin:0 auto"></div></div>
+            <div id="company-result"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEAD DRAWER -->
+<div id="drawer-overlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+<div id="lead-drawer" class="drawer">
+  <div class="drawer-head">
+    <div class="drawer-title" id="drawer-title">Заявка</div>
+    <button class="btn-ghost" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</div>
+
+<script>
+// ══════════════════════════════════
+// CONFIG
+// ══════════════════════════════════
+var SUPA_URL = 'https://zowkxmrmqvlzbncuzhxk.supabase.co';
+var SUPA_ANON = 'sb_publishable_i-9PcWN89WyWVqtcfOMO4g_ifFHElUk';
+var sb = window.Supabase ? window.Supabase.createClient(SUPA_URL, SUPA_ANON) : null;
+
+// Dynamic import of Supabase
+var sbScript = document.createElement('script');
+sbScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+sbScript.onload = function() {
+  sb = window.supabase.createClient(SUPA_URL, SUPA_ANON);
+  sb.auth.onAuthStateChange(function(ev, session) {
+    if (session && session.user) {
+      currentUser = session.user; currentToken = session.access_token;
+      document.getElementById('admin-name').textContent = session.user.email;
+      document.getElementById('pg-login').style.display = 'none';
+      document.getElementById('pg-crm').style.display = 'block';
+      loadDashboard();
+    } else {
+      document.getElementById('pg-login').style.display = 'flex';
+      document.getElementById('pg-crm').style.display = 'none';
+    }
+  });
+};
+document.head.appendChild(sbScript);
+
+var currentUser = null, currentToken = null;
+var allLeads = [], allAudits = [], currentFilter = 'all', currentSearchLeads = '', currentSearchAudits = '';
+var currentLeadId = null;
+
+document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('ru-RU', {weekday:'long',day:'numeric',month:'long'});
+
+// ══════════════════════════════════
+// AUTH
+// ══════════════════════════════════
+async function doLogin() {
+  var email = document.getElementById('l-email').value.trim();
+  var pass  = document.getElementById('l-pass').value;
+  if (!email || !pass) { showLoginMsg('Введите email и пароль'); return; }
+  var btn = document.querySelector('#pg-login .btn-blue');
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    var r = await sb.auth.signInWithPassword({ email, password: pass });
+    if (r.error) showLoginMsg(r.error.message);
+  } catch(e) { showLoginMsg(e.message); }
+  btn.disabled = false; btn.textContent = 'Войти';
+}
+async function doLogout() { await sb.auth.signOut(); }
+function showLoginMsg(msg) { var el = document.getElementById('l-msg'); el.textContent = msg; el.className = 'auth-msg err'; el.style.display = 'block'; }
+
+// ══════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════
+var viewTitles = { dashboard:'Обзор', leads:'Заявки', audits:'Аудиты', company:'Проверка компании по ИНН' };
+function showView(name) {
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('show'); });
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.getElementById('view-'+name).classList.add('show');
+  var nav = document.getElementById('nav-'+name);
+  if (nav) nav.classList.add('active');
+  document.getElementById('topbar-title').textContent = viewTitles[name] || name;
+  if (name === 'leads' && !allLeads.length) loadLeads();
+  if (name === 'audits' && !allAudits.length) loadAudits();
+}
+function refreshCurrent() {
+  var active = document.querySelector('.view.show');
+  if (!active) return;
+  var id = active.id.replace('view-','');
+  if (id === 'dashboard') loadDashboard();
+  if (id === 'leads') loadLeads();
+  if (id === 'audits') loadAudits();
+}
+
+// ══════════════════════════════════
+// API CALLS
+// ══════════════════════════════════
+async function crmFetch(path, opts) {
+  var r = await fetch(path, Object.assign({ headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + currentToken } }, opts));
+  return await r.json();
+}
+
+// ══════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════
+async function loadDashboard() {
+  document.getElementById('stats-loading').style.display = 'block';
+  document.getElementById('stats-content').style.display = 'none';
+  try {
+    var [stats, leads, audits] = await Promise.all([
+      crmFetch('/api/crm?type=stats'),
+      crmFetch('/api/crm?type=leads'),
+      crmFetch('/api/crm?type=audits')
+    ]);
+    allLeads = leads || []; allAudits = audits || [];
+    document.getElementById('s-leads-today').textContent = stats.leads_today || 0;
+    document.getElementById('s-leads-new').textContent = stats.leads_new || 0;
+    document.getElementById('s-audits-today').textContent = stats.audits_today || 0;
+    document.getElementById('s-conversion').textContent = (stats.conversion || 0) + '%';
+    var newCount = stats.leads_new || 0;
+    var badge = document.getElementById('nav-new-count');
+    badge.style.display = newCount > 0 ? 'inline' : 'none';
+    badge.textContent = newCount;
+    renderDashLeads(allLeads.slice(0,5));
+    renderDashAudits(allAudits.slice(0,5));
+    document.getElementById('stats-loading').style.display = 'none';
+    document.getElementById('stats-content').style.display = 'block';
+  } catch(e) {
+    document.getElementById('stats-loading').innerHTML = '<p style="color:var(--red)">Ошибка загрузки: ' + e.message + '</p>';
+  }
+}
+
+function renderDashLeads(leads) {
+  var html = leads.map(function(l) {
+    return '<div style="padding:10px 0;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center">' +
+      '<div><div style="font-size:13px;font-weight:600">' + esc(l.name||l.email||'Без имени') + '</div>' +
+      '<div style="font-size:11px;color:var(--slate)">' + esc(l.source||'') + '</div></div>' +
+      '<span class="status-badge s-' + (l.status||'new') + '">' + statusLabel(l.status||'new') + '</span></div>';
+  }).join('') || '<div style="padding:20px 0;text-align:center;color:var(--slate);font-size:13px">Пока нет заявок</div>';
+  document.getElementById('dash-leads-list').innerHTML = html;
+}
+
+function renderDashAudits(audits) {
+  var html = audits.map(function(a) {
+    var lv = a.overall_risk === 'высокий' ? 'high' : a.overall_risk === 'средний' ? 'med' : 'low';
+    return '<div style="padding:10px 0;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center">' +
+      '<div><div style="font-size:13px;font-weight:600">' + esc(a.site_name||a.url||'') + '</div>' +
+      '<div style="font-size:11px;color:var(--slate)">' + (a.created_at ? new Date(a.created_at).toLocaleDateString('ru-RU') : '') + '</div></div>' +
+      '<span class="status-badge risk-' + lv + '">' + (a.overall_risk||'—') + '</span></div>';
+  }).join('') || '<div style="padding:20px 0;text-align:center;color:var(--slate);font-size:13px">Аудитов нет</div>';
+  document.getElementById('dash-audits-list').innerHTML = html;
+}
+
+// ══════════════════════════════════
+// LEADS
+// ══════════════════════════════════
+async function loadLeads() {
+  document.getElementById('leads-loading').style.display = 'block';
+  document.getElementById('leads-table-wrap').style.display = 'none';
+  document.getElementById('leads-empty').style.display = 'none';
+  try {
+    allLeads = await crmFetch('/api/crm?type=leads') || [];
+    renderLeads();
+  } catch(e) { document.getElementById('leads-loading').innerHTML = '<p style="color:var(--red);padding:20px">Ошибка: ' + e.message + '</p>'; }
+}
+
+function filterLeads(f, el) {
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  currentFilter = f; renderLeads();
+}
+
+function searchLeads(q) { currentSearchLeads = q.toLowerCase(); renderLeads(); }
+
+function renderLeads() {
+  var data = allLeads.filter(function(l) {
+    if (currentFilter !== 'all' && (l.status||'new') !== currentFilter) return false;
+    if (currentSearchLeads) {
+      var hay = ((l.name||'') + (l.email||'') + (l.phone||'') + (l.message||'') + (l.company_name||'')).toLowerCase();
+      if (!hay.includes(currentSearchLeads)) return false;
+    }
+    return true;
+  });
+  document.getElementById('leads-loading').style.display = 'none';
+  if (!data.length) {
+    document.getElementById('leads-table-wrap').style.display = 'none';
+    document.getElementById('leads-empty').style.display = 'block'; return;
+  }
+  document.getElementById('leads-empty').style.display = 'none';
+  document.getElementById('leads-table-wrap').style.display = 'block';
+  document.getElementById('leads-tbody').innerHTML = data.map(function(l) {
+    var dt = l.created_at ? new Date(l.created_at).toLocaleDateString('ru-RU') : '';
+    return '<tr>' +
+      '<td><div class="tbl-name">' + esc(l.name||'Без имени') + '</div>' +
+      '<div class="tbl-contact">' + (l.email?'<a href="mailto:'+esc(l.email)+'">'+esc(l.email)+'</a> ':'') + (l.phone?esc(l.phone):'') + '</div></td>' +
+      '<td><div style="font-size:12px;color:var(--slate-d);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc((l.message||'').substring(0,80)) + '</div></td>' +
+      '<td><div style="font-size:12px;color:var(--slate)">' + esc(l.source||'сайт') + '</div></td>' +
+      '<td><span class="status-badge s-' + (l.status||'new') + '">' + statusLabel(l.status||'new') + '</span></td>' +
+      '<td><div style="font-size:12px;color:var(--slate)">' + dt + '</div></td>' +
+      '<td><button class="btn btn-white btn-sm" onclick="openDrawer(\'' + l.id + '\')">Открыть →</button></td></tr>';
+  }).join('');
+}
+
+// ══════════════════════════════════
+// AUDITS
+// ══════════════════════════════════
+async function loadAudits() {
+  document.getElementById('audits-loading').style.display = 'block';
+  document.getElementById('audits-table-wrap').style.display = 'none';
+  try {
+    allAudits = await crmFetch('/api/crm?type=audits') || [];
+    renderAudits();
+  } catch(e) { document.getElementById('audits-loading').innerHTML = '<p style="color:var(--red);padding:20px">Ошибка: ' + e.message + '</p>'; }
+}
+
+function searchAudits(q) { currentSearchAudits = q.toLowerCase(); renderAudits(); }
+
+function renderAudits() {
+  var data = allAudits.filter(function(a) {
+    if (!currentSearchAudits) return true;
+    return ((a.url||'') + (a.site_name||'')).toLowerCase().includes(currentSearchAudits);
+  });
+  document.getElementById('audits-loading').style.display = 'none';
+  if (!data.length) { document.getElementById('audits-table-wrap').style.display = 'none'; document.getElementById('audits-empty').style.display = 'block'; return; }
+  document.getElementById('audits-empty').style.display = 'none';
+  document.getElementById('audits-table-wrap').style.display = 'block';
+  document.getElementById('audits-tbody').innerHTML = data.map(function(a) {
+    var lv = a.overall_risk === 'высокий' ? 'high' : a.overall_risk === 'средний' ? 'med' : 'low';
+    var dt = a.created_at ? new Date(a.created_at).toLocaleDateString('ru-RU') : '';
+    return '<tr>' +
+      '<td><div class="tbl-name">' + esc(a.site_name||a.url||'') + '</div><div class="tbl-sub">' + esc(a.url||'') + '</div></td>' +
+      '<td style="font-size:12px;color:var(--slate)">' + dt + '</td>' +
+      '<td><span class="status-badge risk-' + lv + '">' + (a.overall_risk||'—') + '</span></td>' +
+      '<td><span style="font-size:13px;font-weight:700;color:var(--red)">' + (a.critical_count||0) + '</span></td>' +
+      '<td><span style="font-size:13px;font-weight:700;color:var(--amber)">' + (a.warning_count||0) + '</span></td>' +
+      '<td style="font-size:12px;font-weight:600;color:var(--red)">' + esc(a.max_fine||'—') + '</td></tr>';
+  }).join('');
+}
+
+// ══════════════════════════════════
+// LEAD DRAWER
+// ══════════════════════════════════
+function openDrawer(id) {
+  currentLeadId = id;
+  var lead = allLeads.find(function(l) { return l.id === id; });
+  if (!lead) return;
+  document.getElementById('drawer-title').textContent = lead.name || lead.email || 'Заявка';
+  document.getElementById('drawer-overlay').classList.add('show');
+  document.getElementById('lead-drawer').classList.add('show');
+  renderDrawer(lead);
+}
+function closeDrawer() {
+  document.getElementById('drawer-overlay').classList.remove('show');
+  document.getElementById('lead-drawer').classList.remove('show');
+  currentLeadId = null;
+}
+
+function renderDrawer(lead) {
+  var dt = lead.created_at ? new Date(lead.created_at).toLocaleString('ru-RU') : '';
+  var html = '<div class="drawer-section">' +
+    '<div class="drawer-section-title">Статус заявки</div>' +
+    '<select class="status-select" onchange="updateLeadStatus(this.value)">' +
+    ['new','active','proposal','closed','rejected'].map(function(s) {
+      return '<option value="' + s + '"' + ((lead.status||'new') === s ? ' selected' : '') + '>' + statusLabel(s) + '</option>';
+    }).join('') + '</select></div>' +
+    '<div class="drawer-section"><div class="drawer-section-title">Контакты</div>' +
+    (lead.name ? '<div class="drawer-field"><label>Имя</label>' + esc(lead.name) + '</div>' : '') +
+    (lead.email ? '<div class="drawer-field"><label>Email</label><a href="mailto:'+esc(lead.email)+'" style="color:var(--blue)">' + esc(lead.email) + '</a></div>' : '') +
+    (lead.phone ? '<div class="drawer-field"><label>Телефон</label><a href="tel:'+esc(lead.phone)+'" style="color:var(--blue)">' + esc(lead.phone) + '</a></div>' : '') + '</div>' +
+    '<div class="drawer-section"><div class="drawer-section-title">Запрос</div>' +
+    '<div class="drawer-field">' + esc(lead.message || 'Без комментария') + '</div>' +
+    '<div style="font-size:11px;color:#94a3b8;margin-top:6px">Источник: ' + esc(lead.source||'сайт') + ' · ' + dt + '</div></div>' +
+    '<div class="drawer-section"><div class="drawer-section-title">Заметки</div>' +
+    '<textarea id="lead-notes" placeholder="Добавьте заметку..." rows="4" style="margin-bottom:8px">' + esc(lead.notes||'') + '</textarea>' +
+    '<button class="btn btn-blue btn-sm" onclick="saveNotes()">Сохранить заметку</button></div>';
+  document.getElementById('drawer-body').innerHTML = html;
+}
+
+async function updateLeadStatus(status) {
+  if (!currentLeadId) return;
+  try {
+    await crmFetch('/api/crm?id=' + currentLeadId, { method: 'PATCH', body: JSON.stringify({ status }) });
+    var lead = allLeads.find(function(l) { return l.id === currentLeadId; });
+    if (lead) lead.status = status;
+    renderLeads();
+  } catch(e) {}
+}
+
+async function saveNotes() {
+  if (!currentLeadId) return;
+  var notes = document.getElementById('lead-notes').value;
+  try {
+    await crmFetch('/api/crm?id=' + currentLeadId, { method: 'PATCH', body: JSON.stringify({ notes }) });
+    var lead = allLeads.find(function(l) { return l.id === currentLeadId; });
+    if (lead) lead.notes = notes;
+    var btn = document.querySelector('#lead-drawer .btn-blue');
+    btn.textContent = '✓ Сохранено'; setTimeout(function(){ btn.textContent = 'Сохранить заметку'; }, 2000);
+  } catch(e) {}
+}
+
+// ══════════════════════════════════
+// COMPANY CHECKER
+// ══════════════════════════════════
+var INDUSTRY_LABELS = {
+  ecommerce:'E-commerce / Торговля', education:'Образование', medicine:'Медицина',
+  finance:'Финансы / Fintech', realestate:'Недвижимость', it:'IT / SaaS',
+  tourism:'Туризм', media:'Медиа / Реклама', other:'Другое'
+};
+
+async function checkCompany() {
+  var inn = document.getElementById('inn-input').value.trim();
+  if (!inn || (inn.length !== 10 && inn.length !== 12)) {
+    showInnErr('ИНН должен содержать 10 цифр (юрлицо) или 12 цифр (ИП)'); return;
+  }
+  document.getElementById('inn-err').style.display = 'none';
+  document.getElementById('inn-loading').style.display = 'block';
+  document.getElementById('company-result').innerHTML = '';
+  var btn = document.getElementById('inn-btn');
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    var r = await fetch('/api/company', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ inn }) });
+    var data = await r.json();
+    if (!r.ok || data.error) throw new Error(data.error || 'Ошибка запроса');
+    if (!data.found) { showInnErr('Компания с ИНН ' + inn + ' не найдена в ЕГРЮЛ/ЕГРИП'); }
+    else renderCompany(data);
+  } catch(e) { showInnErr(e.message); }
+  document.getElementById('inn-loading').style.display = 'none';
+  btn.disabled = false; btn.textContent = 'Проверить →';
+}
+
+function renderCompany(d) {
+  var isActive = d.status === 'active';
+  var indLabel = INDUSTRY_LABELS[d.industry_suggested] || 'Другое';
+  var html = '<div class="company-card fade">' +
+    '<div class="company-header">' +
+    '<div class="company-icon">' + (isActive ? '🏢' : '⛔') + '</div>' +
+    '<div style="flex:1"><div class="company-name">' + esc(d.name_full||d.name_short||'') + '</div>' +
+    '<div class="company-inn">ИНН: ' + esc(d.inn||'') + (d.kpp ? ' · КПП: ' + esc(d.kpp) : '') + (d.ogrn ? ' · ОГРН: ' + esc(d.ogrn) : '') + '</div>' +
+    '<div style="margin-top:8px"><span class="' + (isActive ? 'company-status-active' : 'company-status-inactive') + '">' +
+    (isActive ? '● ' : '✕ ') + esc(d.status_label||'') + '</span></div></div></div>' +
+    '<div class="company-grid">' +
+    field('Организационная форма', d.legal_form) +
+    field('Дата регистрации', d.reg_date || '—') +
+    field('Руководитель', d.director ? (esc(d.director) + (d.director_post ? ' (' + esc(d.director_post) + ')' : '')) : '—') +
+    (d.employees ? field('Численность сотрудников', d.employees + ' чел.') : '') +
+    '</div>' +
+    '<div style="margin-top:12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin-bottom:5px">Юридический адрес</div>' +
+    '<div style="font-size:13px;color:#0f172a">' + esc(d.address||'—') + '</div></div>' +
+    '<div class="company-okved"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin-bottom:4px">ОКВЭД</div>' +
+    '<div style="font-size:14px;font-weight:600">' + esc(d.okved||'—') + '</div>' +
+    (d.okved_name ? '<div style="font-size:12px;color:var(--slate);margin-top:2px">' + esc(d.okved_name) + '</div>' : '') + '</div>' +
+    '<div class="industry-suggestion">' +
+    '<div><div style="font-size:11px;color:rgba(255,255,255,.7);margin-bottom:3px">Рекомендуемая отрасль для аудита</div>' +
+    '<div style="font-size:16px;font-weight:700;color:#fff">' + esc(indLabel) + '</div>' +
+    '<div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">Определено по ОКВЭД ' + esc(d.okved||'') + '</div></div>' +
+    '<a href="/?inn=' + esc(d.inn) + '&industry=' + esc(d.industry_suggested) + '" target="_blank" style="background:#fff;color:var(--blue);font-size:13px;font-weight:700;padding:10px 18px;border-radius:var(--r);text-decoration:none;white-space:nowrap;flex-shrink:0">Запустить аудит →</a></div>' +
+    '</div>';
+  document.getElementById('company-result').innerHTML = html;
+}
+
+function field(label, value) {
+  return '<div class="company-field"><div class="company-field-label">' + label + '</div><div class="company-field-value">' + (value||'—') + '</div></div>';
+}
+
+function showInnErr(msg) {
+  var el = document.getElementById('inn-err'); el.textContent = '⚠ ' + msg; el.style.display = 'block';
+}
+
+// ══════════════════════════════════
+// UTILS
+// ══════════════════════════════════
+var STATUS_LABELS = { new:'Новая', active:'В работе', proposal:'КП отправлено', closed:'Закрыта', rejected:'Отказ' };
+function statusLabel(s) { return STATUS_LABELS[s] || s; }
+function esc(s) { return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>
