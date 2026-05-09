@@ -1,5 +1,67 @@
 // ══════════════════════════════════════════════════════
-// БАЗОВЫЕ НОРМЫ — применяются ко ВСЕМ сайтам всегда
+// ROBUST JSON PARSER — исправляет неэкранированные кавычки
+// ══════════════════════════════════════════════════════
+function safeParseJSON(str) {
+  // Шаг 1: убираем управляющие символы
+  str = str.replace(/[\x00-\x1F\x7F]/g, ' ');
+
+  // Шаг 2: прямой парсинг
+  try { return JSON.parse(str); } catch(e) {}
+
+  // Шаг 3: убираем trailing commas
+  var s2 = str.replace(/,(\s*[}\]])/g, '$1');
+  try { return JSON.parse(s2); } catch(e) {}
+
+  // Шаг 4: state machine — находим и экранируем кавычки внутри строк
+  str = fixUnescapedQuotes(str);
+  try { return JSON.parse(str); } catch(e) {}
+
+  str = str.replace(/,(\s*[}\]])/g, '$1');
+  try { return JSON.parse(str); } catch(e) {}
+
+  throw new Error('Не удалось разобрать ответ модели. Попробуйте ещё раз.');
+}
+
+function fixUnescapedQuotes(str) {
+  var result = '';
+  var inString = false;
+  var i = 0;
+  while (i < str.length) {
+    var c = str[i];
+    // Обработка escape-последовательности
+    if (inString && c === '\\') {
+      result += c + (str[i+1] || '');
+      i += 2;
+      continue;
+    }
+    if (c === '"') {
+      if (!inString) {
+        inString = true;
+        result += c;
+        i++;
+        continue;
+      }
+      // Проверяем что после кавычки стоит структурный символ JSON
+      var j = i + 1;
+      while (j < str.length && (str[j] === ' ' || str[j] === '\t')) j++;
+      var next = str[j];
+      if (next === ':' || next === ',' || next === '}' || next === ']' || j >= str.length) {
+        // Закрывающая кавычка
+        inString = false;
+        result += c;
+      } else {
+        // Кавычка внутри строки — экранируем
+        result += '\\"';
+      }
+      i++;
+      continue;
+    }
+    result += c;
+    i++;
+  }
+  return result;
+}
+
 // ══════════════════════════════════════════════════════
 var BASE_NPA = `
 УНИВЕРСАЛЬНЫЙ БЛОК (проверять всегда):
@@ -149,7 +211,8 @@ ${detail}
 - 7-9 = critical, 3-6 = warning, 1-2 = info
 - compliance_score: 0-100 (100 = полное соответствие)
 - Выяви ровно ${riskCount} рисков, ${qwCount} быстрых победы
-- Описания конкретные, ссылки на точные статьи законов`;
+- Описания конкретные, ссылки на точные статьи законов
+- СТРОГО: в строковых значениях JSON нельзя использовать символ двойной кавычки ("). Вместо кавычек используй скобки [] или тире — . Это критически важно для валидности JSON.`;
 }
 
 // ══════════════════════════════════════════════════════
@@ -205,12 +268,21 @@ module.exports = async function handler(req, res) {
     var response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: model, max_tokens: maxTok, stream: true, system: buildPrompt(auditType, industry), messages: [{ role: 'user', content: msg }] })
+      body: JSON.stringify({
+        model: model,
+        max_tokens: maxTok,
+        stream: true,
+        system: buildPrompt(auditType, industry),
+        messages: [
+          { role: 'user', content: msg },
+          { role: 'assistant', content: '{' }
+        ]
+      })
     });
 
     if (!response.ok) { var ed = await response.json(); send({ type: 'error', message: (ed.error && ed.error.message) || 'API error' }); res.end(); return; }
 
-    var fullText = '', lastT = Date.now(), reader = response.body.getReader(), decoder = new TextDecoder();
+    var fullText = '{', lastT = Date.now(), reader = response.body.getReader(), decoder = new TextDecoder();
     while (true) {
       var chunk = await reader.read();
       if (chunk.done) break;
@@ -235,9 +307,7 @@ module.exports = async function handler(req, res) {
     var s = fullText.indexOf('{'), e2 = fullText.lastIndexOf('}');
     if (s === -1 || e2 === -1) { send({ type: 'error', message: 'Модель вернула некорректный ответ. Повторите попытку.' }); res.end(); return; }
 
-    // Заменяем все управляющие символы на пробел (невалидны в JSON вне строк)
-    var jsonStr = fullText.slice(s, e2 + 1).replace(/[\x00-\x1F\x7F]/g, ' ');
-    var parsed = JSON.parse(jsonStr);
+    var parsed = safeParseJSON(fullText.slice(s, e2 + 1));
 
     if (userId && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY) {
       try {
