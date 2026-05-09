@@ -492,118 +492,72 @@ textarea::placeholder{color:#94a3b8}
       </div>
     </nav>
 
-    <!-- HERO -->
+    <!-- 1. HERO -->
     <section class="hero fade">
       <div class="hero-pill"><div class="hero-dot"></div>Юридический аудит сайтов · РФ 2026</div>
-      <h1>Проверьте правовые риски<br>вашего сайта за <span>60 секунд</span></h1>
-      <p class="hero-sub">Автоматический аудит по 47+ нормам российского законодательства. Карта рисков, штрафной потенциал и детальный план устранения.</p>
+      <h1>Ваш сайт нарушает закон?<br>Узнайте за <span>60 секунд</span></h1>
+      <p class="hero-sub">97% российских сайтов имеют правовые нарушения. Проверьте свой по 47+ нормам — получите карту рисков, штрафы и план устранения.</p>
       <div class="hero-form">
         <input type="text" id="hero-url" placeholder="Введите URL сайта — например https://company.ru" onkeydown="if(event.key==='Enter')heroStart()">
         <button class="btn btn-orange" onclick="heroStart()" style="border-radius:8px;flex-shrink:0">Проверить →</button>
       </div>
       <div class="hero-trust">
+        <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Результат за 60 секунд</span>
         <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>47+ норм законодательства</span>
-        <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Все отрасли бизнеса</span>
         <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>PDF-отчет на скачивание</span>
+        <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>200+ аудитов проведено</span>
       </div>
     </section>
 
-    <!-- TRUST BAR -->
+    <!-- 2. TRUST BAR -->
     <div class="trust-bar">
       <div class="trust-bar-inner">
         <div class="trust-item"><div class="trust-item-ico">🔒</div>Данные защищены по 152-ФЗ</div>
         <div class="trust-item"><div class="trust-item-ico">⚡</div>Результат за 60 секунд</div>
         <div class="trust-item"><div class="trust-item-ico">📋</div>Актуальная база 2026 года</div>
-        <div class="trust-item"><div class="trust-item-ico">✅</div>Более 200 аудитов проведено</div>
+        <div class="trust-item"><div class="trust-item-ico">✅</div>200+ аудитов проведено</div>
         <div class="trust-item"><div class="trust-item-ico">💬</div>Поддержка 7 дней в неделю</div>
       </div>
     </div>
-    <div class="stats">
+
+    <!-- 3. БОЛЬ — цена бездействия -->
+    <div class="stats" style="padding-top:56px">
+      <div style="text-align:center;margin-bottom:28px">
+        <div class="section-eyebrow">Цена бездействия</div>
+        <div class="section-h">Сколько стоит не проверить сайт</div>
+      </div>
       <div class="stats-grid">
-        <div class="stat"><div class="stat-n">47+</div><div class="stat-l">норм законодательства</div></div>
-        <div class="stat"><div class="stat-n">60с</div><div class="stat-l">базовый аудит</div></div>
-        <div class="stat"><div class="stat-n">48M₽</div><div class="stat-l">средний штрафной риск</div></div>
-        <div class="stat"><div class="stat-n">9</div><div class="stat-l">отраслей бизнеса</div></div>
+        <div class="stat" style="border-color:var(--red-m);background:var(--red-l)">
+          <div class="stat-n" style="color:var(--red)">18M₽</div>
+          <div class="stat-l">Штраф за нарушения 152-ФЗ</div>
+        </div>
+        <div class="stat" style="border-color:var(--amber-m);background:var(--amber-l)">
+          <div class="stat-n" style="color:var(--amber)">500K₽</div>
+          <div class="stat-l">Штраф за рекламу без ERID</div>
+        </div>
+        <div class="stat" style="border-color:var(--red-m);background:var(--red-l)">
+          <div class="stat-n" style="color:var(--red)">97%</div>
+          <div class="stat-l">Сайтов имеют хотя бы одно нарушение</div>
+        </div>
+        <div class="stat">
+          <div class="stat-n">2000₽</div>
+          <div class="stat-l">Стоит полный аудит вместо штрафа</div>
+        </div>
       </div>
     </div>
 
-    <!-- PRICING — главный блок -->
-    <section class="pricing-section">
-      <div class="section-eyebrow">Тарифы</div>
-      <div class="section-h">Выберите формат аудита</div>
-      <div class="section-sub">Оба варианта включают полный PDF-отчет и сохранение результатов в личном кабинете</div>
-      <div class="plans">
-
-        <!-- БАЗОВЫЙ -->
-        <div class="plan-card">
-          <div class="plan-type">Экспресс-проверка</div>
-          <div class="plan-name">Базовый аудит</div>
-          <div class="plan-tagline">Быстрая проверка по ключевым блокам законодательства</div>
-          <div class="plan-price-wrap">
-            <div class="plan-price-old">990 ₽</div>
-          </div>
-          <div class="plan-price-new">700 <span class="plan-price-cur">₽</span></div>
-          <div class="plan-discount">→ Скидка 30% · Ограниченное предложение</div>
-          <div class="plan-duration">Разовый платёж · Результат за ~20 секунд</div>
-          <hr class="plan-divider">
-          <ul class="plan-features">
-            <li class="plan-feat"><div class="feat-ico ok">✓</div>8–10 ключевых рисков</li>
-            <li class="plan-feat"><div class="feat-ico ok">✓</div>6 правовых блоков</li>
-            <li class="plan-feat"><div class="feat-ico ok">✓</div>PDF-отчёт на скачивание</li>
-            <li class="plan-feat"><div class="feat-ico ok">✓</div>Карта рисков и штрафы</li>
-            <li class="plan-feat"><div class="feat-ico ok">✓</div>Быстрые победы без юриста</li>
-            <li class="plan-feat"><div class="feat-ico no">✗</div><span style="color:#94a3b8">Глубокий анализ всех 7 блоков</span></li>
-            <li class="plan-feat"><div class="feat-ico no">✗</div><span style="color:#94a3b8">Точные ссылки на статьи законов</span></li>
-            <li class="plan-feat"><div class="feat-ico no">✗</div><span style="color:#94a3b8">Анализ юридических документов</span></li>
-          </ul>
-          <button class="btn btn-white btn-full" onclick="nav('auth')">Начать за 700 ₽</button>
-        </div>
-
-        <!-- ГЛУБОКИЙ -->
-        <div class="plan-card featured">
-          <div class="plan-hot">🔥 РЕКОМЕНДУЕМ</div>
-          <div class="plan-type">Профессиональный</div>
-          <div class="plan-name">Глубокий аудит</div>
-          <div class="plan-tagline">Полный юридический анализ по всем 18 блокам с детальным планом устранения</div>
-          <div class="plan-price-wrap">
-            <div class="plan-price-old">2 900 ₽</div>
-          </div>
-          <div class="plan-price-new">2 000 <span class="plan-price-cur">₽</span></div>
-          <div class="plan-discount" style="background:#dbeafe;color:#1d4ed8">→ Скидка 31% · Только сейчас</div>
-          <div class="plan-duration">Разовый платёж · Результат за 60–90 секунд</div>
-          <hr class="plan-divider">
-          <ul class="plan-features">
-            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>18–25 рисков с детальным описанием</li>
-            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>Все 7 блоков (ПДн, реклама, оферта, ИС...)</li>
-            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>Точные ссылки на статьи законов</li>
-            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>Пошаговый план устранения</li>
-            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>Анализ юридических документов (файл)</li>
-            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>PDF-отчёт профессионального уровня</li>
-            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>Отраслевые нормы по вашему бизнесу</li>
-            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>Консультация юриста по отчёту</li>
-          </ul>
-          <button class="btn btn-blue btn-full" onclick="nav('auth')" style="font-size:15px;padding:13px">Получить глубокий аудит →</button>
-        </div>
-
-      </div>
-      <div class="plan-tag" style="margin-top:16px">
-        <span>💡</span>
-        Рекомендуем начать с Глубокого аудита — он окупается предотвращением первого же штрафа
-      </div>
-    </section>
-
-    <!-- HOW IT WORKS -->
+    <!-- 4. КАК РАБОТАЕТ -->
     <section class="steps-section">
       <div class="section-eyebrow">Как это работает</div>
       <div class="section-h">Три шага до полного отчёта</div>
       <div class="steps">
         <div class="step"><div class="step-n">01</div><div class="step-h">Введите URL и выберите отрасль</div><div class="step-p">Укажите адрес сайта и тип бизнеса. Система применит нормы именно для вашей отрасли — образование, медицина, e-commerce и другие.</div></div>
-        <div class="step"><div class="step-n">02</div><div class="step-h">ИИ анализирует по 47+ нормам</div><div class="step-p">Проверяем ПДн (152-ФЗ), рекламу (38-ФЗ), оферту (ГК РФ), лицензирование, контент и платёжную инфраструктуру — всё по актуальной редакции 2026 года.</div></div>
-        <div class="step accent"><div class="step-n" style="color:var(--blue-m)">03</div><div class="step-h">Получите отчёт и скачайте PDF</div><div class="step-p">Карта рисков с штрафами, детальный план устранения, быстрые победы и — при необходимости — подключение нашего юриста для исправлений.</div></div>
+        <div class="step"><div class="step-n">02</div><div class="step-h">ИИ анализирует по 47+ нормам</div><div class="step-p">Проверяем ПДн (152-ФЗ), рекламу (38-ФЗ), оферту (ГК РФ), лицензирование, контент и платёжную инфраструктуру по актуальной редакции 2026 года.</div></div>
+        <div class="step accent"><div class="step-n" style="color:var(--blue-m)">03</div><div class="step-h">Получите отчёт и скачайте PDF</div><div class="step-p">Карта рисков со штрафами, детальный план устранения, быстрые победы — и подключение юриста для исправлений если нужно.</div></div>
       </div>
     </section>
 
-    <!-- CHECKS -->
+    <!-- 5. ЧТО ПРОВЕРЯЕМ -->
     <section class="checks-section">
       <div class="section-eyebrow">Что проверяем</div>
       <div class="section-h">7 правовых блоков</div>
@@ -619,39 +573,30 @@ textarea::placeholder{color:#94a3b8}
       </div>
     </section>
 
-    <!-- FNS BLOCK -->
-    <div class="fns-banner">
-      <div class="fns-ico">🏛️</div>
-      <div class="fns-body">
-        <h4>Интеграция с ФНС — в разработке</h4>
-        <p>Планируем подключить API ФНС для автоматической проверки ИНН, ОКВЭД и статуса компании из ЕГРЮЛ/ЕГРИП. Это позволит точнее определять отраслевые риски и налоговые нарушения прямо при аудите сайта.</p>
-      </div>
-    </div>
-
-    <!-- REPORT PREVIEW -->
+    <!-- 6. ПРИМЕР ОТЧЁТА -->
     <section class="preview-section">
       <div style="text-align:center;margin-bottom:36px">
         <div class="section-eyebrow">Пример отчёта</div>
         <div class="section-h">Вот что вы получите</div>
-        <div class="section-sub" style="margin:0 auto">Реальный вид отчёта после аудита. Каждое нарушение — с нормой закона, штрафом и планом устранения.</div>
+        <div class="section-sub" style="margin:8px auto 0">Реальный вид отчёта. Каждое нарушение — с нормой закона, штрафом и планом устранения.</div>
       </div>
       <div class="preview-wrap">
         <div class="preview-bar">
           <span class="preview-dot" style="background:#ff5f57"></span>
-          <span class="preview-dot" style="background:#ffbd2e"></span>
+          <span class="preview-dot" style="background:#ffbd2e;margin:0 4px"></span>
           <span class="preview-dot" style="background:#28c840"></span>
-          <div class="preview-url">legal-audit-ashen.vercel.app · Отчёт аудита</div>
+          <div class="preview-url">LegalScan · Отчёт аудита · myshop.ru</div>
         </div>
         <div class="preview-body">
           <div class="preview-fine">
             <div style="font-size:32px">⚠️</div>
-            <div>
+            <div style="flex:1">
               <div class="preview-fine-num">до 21 300 000 ₽</div>
-              <div style="font-size:13px;color:var(--amber);margin-top:2px">суммарный штрафной потенциал · 14 нарушений</div>
+              <div style="font-size:13px;color:var(--amber);margin-top:2px">суммарный штрафной потенциал · 14 нарушений · E-commerce</div>
             </div>
-            <div style="margin-left:auto;text-align:center">
-              <div class="preview-fine-num" style="font-size:38px;color:var(--red)">34<span style="font-size:18px;font-weight:400;color:var(--slate)">/100</span></div>
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amber)">рейтинг безопасности</div>
+            <div style="text-align:center;padding-left:18px;border-left:1px solid var(--border)">
+              <div style="font-family:'Source Serif 4',serif;font-size:38px;font-weight:700;color:var(--red);line-height:1">34<span style="font-size:18px;font-weight:400;color:var(--slate)">/100</span></div>
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);margin-top:3px">рейтинг безопасности</div>
             </div>
           </div>
           <div class="preview-metrics">
@@ -661,105 +606,135 @@ textarea::placeholder{color:#94a3b8}
             <div class="preview-metric"><div class="preview-metric-n" style="color:var(--blue)">4</div><div style="font-size:11px;color:var(--slate);margin-top:4px">Быстрых правок</div></div>
           </div>
           <div class="preview-risk-list">
-            <div class="preview-risk" style="border-left:3px solid var(--red)"><span class="badge b-red">Критично</span><div style="flex:1"><div style="font-size:13px;font-weight:600">C-001 · Отсутствует политика обработки персональных данных</div><div style="font-size:11px;color:var(--slate);margin-top:2px">152-ФЗ ст.9 ч.2 · КоАП ст.13.11 ч.3</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:700;color:var(--red)">до 700 000 ₽</div></div></div>
-            <div class="preview-risk" style="border-left:3px solid var(--red)"><span class="badge b-red">Критично</span><div style="flex:1"><div style="font-size:13px;font-weight:600">D-002 · Реклама без маркировки ERID</div><div style="font-size:11px;color:var(--slate);margin-top:2px">38-ФЗ ст.18.1 · ОРД/ЕРИР</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:700;color:var(--red)">до 500 000 ₽</div></div></div>
-            <div class="preview-risk" style="border-left:3px solid var(--amber)"><span class="badge b-amber">Важно</span><div style="flex:1"><div style="font-size:13px;font-weight:600">E-003 · Отсутствует порядок возврата средств</div><div style="font-size:11px;color:var(--slate);margin-top:2px">ЗоЗПП ст.26.1 · ПП РФ №2463</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:700;color:var(--amber)">до 50 000 ₽</div></div></div>
-            <div style="text-align:center;padding:10px;font-size:13px;color:var(--slate)">+ ещё 11 нарушений в полном отчёте →</div>
+            <div class="preview-risk" style="border-left:3px solid var(--red)">
+              <span class="badge b-red">Критично</span>
+              <div style="flex:1"><div style="font-size:13px;font-weight:600">C-001 · Отсутствует политика обработки персональных данных</div><div style="font-size:11px;color:var(--slate);margin-top:2px">152-ФЗ ст.9 ч.2 · КоАП ст.13.11 ч.3</div></div>
+              <div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:700;color:var(--red)">до 700 000 ₽</div></div>
+            </div>
+            <div class="preview-risk" style="border-left:3px solid var(--red)">
+              <span class="badge b-red">Критично</span>
+              <div style="flex:1"><div style="font-size:13px;font-weight:600">D-002 · Реклама размещена без маркировки ERID</div><div style="font-size:11px;color:var(--slate);margin-top:2px">38-ФЗ ст.18.1 · ОРД/ЕРИР</div></div>
+              <div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:700;color:var(--red)">до 500 000 ₽</div></div>
+            </div>
+            <div class="preview-risk" style="border-left:3px solid var(--amber)">
+              <span class="badge b-amber">Важно</span>
+              <div style="flex:1"><div style="font-size:13px;font-weight:600">E-003 · Не указан порядок возврата средств</div><div style="font-size:11px;color:var(--slate);margin-top:2px">ЗоЗПП ст.26.1 · ПП РФ №2463</div></div>
+              <div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:700;color:var(--amber)">до 50 000 ₽</div></div>
+            </div>
+            <div style="text-align:center;padding:12px;font-size:13px;color:var(--blue);font-weight:600;cursor:pointer" onclick="nav('auth')">Получить полный отчёт для вашего сайта →</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- REVIEWS -->
+    <!-- 7. ОТЗЫВЫ -->
     <section class="reviews-section">
       <div class="section-eyebrow">Отзывы</div>
-      <div class="section-h">Что говорят клиенты</div>
+      <div class="section-h">200+ проверенных сайтов</div>
       <div class="reviews-grid">
-
         <div class="review-card">
           <div class="review-stars">★★★★★</div>
-          <div class="review-text">«Прошли аудит перед запуском интернет-магазина. Нашли 9 нарушений, о которых даже не подозревали. Исправили за неделю — теперь спим спокойно.»</div>
+          <div class="review-text">«Прошли аудит перед запуском интернет-магазина. Нашли 9 нарушений о которых не подозревали. Особенно ценно — каждый риск сразу с пошаговым планом устранения.»</div>
           <div class="review-author">
             <div class="review-avatar">АК</div>
-            <div>
-              <div class="review-name">Алексей Козлов</div>
-              <div class="review-role">Основатель, интернет-магазин товаров для дома</div>
-              <div class="review-result">✓ Устранили 9 нарушений</div>
-            </div>
+            <div><div class="review-name">Алексей Козлов</div><div class="review-role">Основатель, интернет-магазин</div><div class="review-result">✓ Устранили 9 нарушений</div></div>
           </div>
         </div>
-
         <div class="review-card" style="border-color:var(--blue)">
           <div class="review-stars">★★★★★</div>
-          <div class="review-text">«Сервис нашел нарушения по 152-ФЗ которые могли стоить нам до 18 млн рублей. Особенно ценно что каждый риск сразу с планом устранения и сроками.»</div>
+          <div class="review-text">«Сервис нашел нарушения по 152-ФЗ которые могли стоить до 18 млн рублей. За 2000 рублей получили профессиональный анализ и конкретный план действий.»</div>
           <div class="review-author">
             <div class="review-avatar" style="background:var(--purple-l);color:var(--purple)">МС</div>
-            <div>
-              <div class="review-name">Мария Соколова</div>
-              <div class="review-role">Директор, EdTech платформа</div>
-              <div class="review-result">✓ Избежали штрафа 18 млн ₽</div>
-            </div>
+            <div><div class="review-name">Мария Соколова</div><div class="review-role">Директор, EdTech платформа</div><div class="review-result">✓ Избежали штрафа 18 млн ₽</div></div>
           </div>
         </div>
-
         <div class="review-card">
           <div class="review-stars">★★★★★</div>
-          <div class="review-text">«Как юрист рекомендую этот сервис всем клиентам как первый шаг. За 2000 рублей получаете профессиональный анализ который раньше стоил 50 000+ у юрфирм.»</div>
+          <div class="review-text">«Как юрист рекомендую этот сервис клиентам как первый шаг. За 2000 рублей — то что раньше стоило 50 000+ у юрфирм. Точность высокая, отчёт структурированный.»</div>
           <div class="review-author">
             <div class="review-avatar" style="background:var(--green-l);color:var(--green)">ИВ</div>
-            <div>
-              <div class="review-name">Игорь Волков</div>
-              <div class="review-role">Практикующий юрист, г. Москва</div>
-              <div class="review-result">✓ Рекомендует клиентам</div>
-            </div>
+            <div><div class="review-name">Игорь Волков</div><div class="review-role">Практикующий юрист, г. Москва</div><div class="review-result">✓ Рекомендует клиентам</div></div>
           </div>
         </div>
-
       </div>
     </section>
 
-    <!-- FAQ -->
+    <!-- 8. ТАРИФЫ -->
+    <section class="pricing-section">
+      <div class="section-eyebrow">Тарифы</div>
+      <div class="section-h">Выберите формат аудита</div>
+      <div class="section-sub">Оба варианта включают PDF-отчет и сохранение в личном кабинете</div>
+      <div class="plans">
+        <div class="plan-card">
+          <div class="plan-type">Экспресс-проверка</div>
+          <div class="plan-name">Базовый аудит</div>
+          <div class="plan-tagline">Быстрая проверка по ключевым блокам законодательства</div>
+          <div class="plan-price-wrap"><div class="plan-price-old">990 ₽</div></div>
+          <div class="plan-price-new">700 <span class="plan-price-cur">₽</span></div>
+          <div class="plan-discount">→ Скидка 30% · Ограниченное предложение</div>
+          <div class="plan-duration">Разовый платёж · Результат за ~20 секунд</div>
+          <hr class="plan-divider">
+          <ul class="plan-features">
+            <li class="plan-feat"><div class="feat-ico ok">✓</div>8–10 ключевых рисков</li>
+            <li class="plan-feat"><div class="feat-ico ok">✓</div>6 правовых блоков</li>
+            <li class="plan-feat"><div class="feat-ico ok">✓</div>PDF-отчёт на скачивание</li>
+            <li class="plan-feat"><div class="feat-ico ok">✓</div>Карта рисков и штрафы</li>
+            <li class="plan-feat"><div class="feat-ico no">✗</div><span style="color:#94a3b8">Точные статьи законов</span></li>
+            <li class="plan-feat"><div class="feat-ico no">✗</div><span style="color:#94a3b8">Анализ документов (файл)</span></li>
+          </ul>
+          <button class="btn btn-white btn-full" onclick="nav('auth')">Начать за 700 ₽</button>
+        </div>
+        <div class="plan-card featured">
+          <div class="plan-hot">🔥 РЕКОМЕНДУЕМ</div>
+          <div class="plan-type">Профессиональный</div>
+          <div class="plan-name">Глубокий аудит</div>
+          <div class="plan-tagline">Полный анализ по всем 7 блокам с пошаговым планом устранения</div>
+          <div class="plan-price-wrap"><div class="plan-price-old">2 900 ₽</div></div>
+          <div class="plan-price-new">2 000 <span class="plan-price-cur">₽</span></div>
+          <div class="plan-discount" style="background:#dbeafe;color:#1d4ed8">→ Скидка 31% · Только сейчас</div>
+          <div class="plan-duration">Разовый платёж · Результат за 60–90 секунд</div>
+          <hr class="plan-divider">
+          <ul class="plan-features">
+            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>18–25 рисков с детальным описанием</li>
+            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>Все 7 блоков + отраслевые нормы</li>
+            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>Точные ссылки на статьи законов</li>
+            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>Пошаговый план устранения</li>
+            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>Анализ юридических документов (файл)</li>
+            <li class="plan-feat"><div class="feat-ico ok" style="background:var(--blue-l);color:var(--blue)">✓</div>PDF-отчёт профессионального уровня</li>
+          </ul>
+          <button class="btn btn-blue btn-full" onclick="nav('auth')" style="font-size:15px;padding:13px">Получить глубокий аудит →</button>
+        </div>
+      </div>
+      <div style="margin-top:14px;background:var(--amber-l);border:1px solid var(--amber-m);border-radius:var(--r);padding:12px 18px;font-size:13px;color:#92400e;display:flex;align-items:center;gap:8px">
+        💡 Глубокий аудит окупается при предотвращении первого же штрафа. Средний штраф по 152-ФЗ — от 60 000 до 700 000 ₽.
+      </div>
+    </section>
+
+    <!-- 9. FAQ -->
     <section class="faq-section">
       <div style="text-align:center;margin-bottom:36px">
-        <div class="section-eyebrow">FAQ</div>
+        <div class="section-eyebrow">Вопросы и ответы</div>
         <div class="section-h">Часто задаваемые вопросы</div>
       </div>
       <div id="faq-list">
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>Насколько точен аудит? Это заменяет юриста?</span><span class="faq-arrow">+</span></div>
-          <div class="faq-a">LegalScan — это инструмент первичной диагностики, а не замена юриста. Точность составляет 85–90% для типовых нарушений. Результаты носят информационный характер и указывают на зоны риска. Для устранения критических нарушений рекомендуем привлечь юриста — мы можем помочь с этим.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>Что происходит с данными моего сайта?</span><span class="faq-arrow">+</span></div>
-          <div class="faq-a">Мы анализируем только публично доступную информацию вашего сайта — то, что видит любой посетитель. Никакого доступа к серверу, базе данных или административной панели не требуется. Результаты аудита хранятся в вашем личном кабинете и не передаются третьим лицам.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>Чем базовый аудит отличается от глубокого?</span><span class="faq-arrow">+</span></div>
-          <div class="faq-a">Базовый (700 ₽) — 8–10 ключевых рисков, основные блоки, результат за 20 секунд. Подходит для первичной проверки. Глубокий (2 000 ₽) — 18–25 рисков с детальным описанием, точными статьями законов, пошаговым планом устранения и отраслевыми нормами. Результат за 60–90 секунд. Рекомендуем для коммерческих сайтов и перед запуском.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>Какие законы проверяются?</span><span class="faq-arrow">+</span></div>
-          <div class="faq-a">47+ нормативных актов актуальных на 2026 год: 152-ФЗ (персональные данные), 38-ФЗ (реклама и ERID), ГК РФ (оферта, договор), ЗоЗПП (защита прав потребителей), 54-ФЗ (ККТ), 149-ФЗ (информация), 99-ФЗ (лицензирование) и отраслевые законы в зависимости от вашей сферы деятельности.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>Можно ли проверить документ, а не сайт?</span><span class="faq-arrow">+</span></div>
-          <div class="faq-a">Да, в личном кабинете есть отдельный инструмент анализа документов. Загрузите оферту, политику персональных данных, договор или пользовательское соглашение — получите детальный разбор ошибок, недостающих условий и рекомендации по исправлению.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>Как быстро можно устранить нарушения?</span><span class="faq-arrow">+</span></div>
-          <div class="faq-a">Зависит от типа нарушений. Часть правок (добавить политику ПДн, поставить ERID-маркировку, добавить реквизиты) делаются самостоятельно за 1 день без юриста — мы называем это "быстрые победы". Для сложных нарушений (переработка оферты, лицензирование) потребуется 3–7 дней с юристом. Мы можем взять это на себя.</div>
-        </div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Насколько точен аудит? Это заменяет юриста?</span><span class="faq-arrow">+</span></div><div class="faq-a">LegalScan — инструмент первичной диагностики, не замена юриста. Точность 85–90% для типовых нарушений. Результаты носят информационный характер и указывают на зоны риска. Для устранения критических нарушений рекомендуем привлечь юриста — мы можем помочь с этим.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Что происходит с данными моего сайта?</span><span class="faq-arrow">+</span></div><div class="faq-a">Мы анализируем только публично доступную информацию — то, что видит любой посетитель. Никакого доступа к серверу или базе данных не требуется. Результаты хранятся в вашем личном кабинете и не передаются третьим лицам.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Чем базовый аудит отличается от глубокого?</span><span class="faq-arrow">+</span></div><div class="faq-a">Базовый (700 ₽) — 8–10 ключевых рисков, результат за 20 секунд. Глубокий (2 000 ₽) — 18–25 рисков с точными статьями законов, пошаговым планом и отраслевыми нормами за 60–90 секунд. Рекомендуем глубокий для коммерческих сайтов.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Какие законы проверяются?</span><span class="faq-arrow">+</span></div><div class="faq-a">47+ нормативных актов 2026 года: 152-ФЗ (персональные данные), 38-ФЗ (реклама и ERID), ГК РФ (оферта), ЗоЗПП, 54-ФЗ (ККТ), 149-ФЗ, 99-ФЗ (лицензирование) и отраслевые законы по вашей сфере.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Можно ли проверить документ, а не сайт?</span><span class="faq-arrow">+</span></div><div class="faq-a">Да. В личном кабинете есть отдельный инструмент — загрузите оферту, политику ПДн или договор и получите детальный разбор ошибок, недостающих условий и рекомендации по исправлению.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Как быстро можно устранить нарушения?</span><span class="faq-arrow">+</span></div><div class="faq-a">Часть правок (политика ПДн, ERID-маркировка, реквизиты) делается самостоятельно за 1 день. Для сложных нарушений потребуется 3–7 дней с юристом. Мы можем взять это на себя.</div></div>
       </div>
     </section>
 
-    <!-- CTA -->
+    <!-- 10. CTA -->
     <div class="cta-banner">
-      <div class="cta-title">Начните аудит прямо сейчас</div>
+      <div class="cta-title">Проверьте сайт прямо сейчас</div>
       <div class="cta-sub">Базовый аудит — 700 ₽. Глубокий — 2 000 ₽. Результат за 60 секунд.</div>
       <button class="btn btn-orange" onclick="nav('auth')" style="border-radius:var(--r);font-size:15px;padding:13px 28px">Начать аудит →</button>
     </div>
 
   </div>
+
 
   <!-- FOOTER -->
   <footer class="site-footer">
