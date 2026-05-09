@@ -69,12 +69,7 @@ module.exports = async function handler(req, res) {
 
     var s = fullText.indexOf('{'), e2 = fullText.lastIndexOf('}');
     if (s === -1 || e2 === -1) { send({ type: 'error', message: 'Ошибка анализа документа' }); res.end(); return; }
-    var jsonStr = fullText.slice(s, e2 + 1).replace(/[\x00-\x1F\x7F]/g, function(c) {
-      if (c === '\n') return '\\n';
-      if (c === '\r') return '\\r';
-      if (c === '\t') return '\\t';
-      return '';
-    });
+    var jsonStr = fullText.slice(s, e2 + 1).replace(/[\x00-\x1F\x7F]/g, ' ');
     send({ type: 'done', data: JSON.parse(jsonStr) });
     res.end();
   } catch(err) { send({ type: 'error', message: err.message || 'Unknown error' }); res.end(); }

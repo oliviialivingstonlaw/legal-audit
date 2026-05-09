@@ -235,13 +235,8 @@ module.exports = async function handler(req, res) {
     var s = fullText.indexOf('{'), e2 = fullText.lastIndexOf('}');
     if (s === -1 || e2 === -1) { send({ type: 'error', message: 'Модель вернула некорректный ответ. Повторите попытку.' }); res.end(); return; }
 
-    // Очищаем управляющие символы внутри JSON-строк
-    var jsonStr = fullText.slice(s, e2 + 1).replace(/[\x00-\x1F\x7F]/g, function(c) {
-      if (c === '\n') return '\\n';
-      if (c === '\r') return '\\r';
-      if (c === '\t') return '\\t';
-      return '';
-    });
+    // Заменяем все управляющие символы на пробел (невалидны в JSON вне строк)
+    var jsonStr = fullText.slice(s, e2 + 1).replace(/[\x00-\x1F\x7F]/g, ' ');
     var parsed = JSON.parse(jsonStr);
 
     if (userId && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY) {
