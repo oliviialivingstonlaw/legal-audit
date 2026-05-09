@@ -438,6 +438,28 @@ textarea::placeholder{color:#94a3b8}
 .faq-a{font-size:14px;color:var(--slate-d);line-height:1.7;padding-bottom:16px;display:none}
 .faq-a.open{display:block}
 
+/* GEN DOC */
+.gen-doc-wrap{max-width:700px;margin:0 auto;padding:28px 20px}
+.doc-type-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+.doc-type-card{background:#fff;border:2px solid var(--border);border-radius:var(--rl);padding:16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px}
+.doc-type-card:hover{border-color:var(--purple);background:var(--purple-l)}
+.doc-type-card.sel{border-color:var(--purple);background:var(--purple-l)}
+.doc-type-ico{width:40px;height:40px;border-radius:10px;background:var(--purple-l);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.doc-type-name{font-size:14px;font-weight:700}
+.doc-type-desc{font-size:12px;color:var(--slate);margin-top:2px}
+.doc-price-tag{display:inline-block;font-size:11px;font-weight:700;color:var(--purple);background:var(--purple-l);padding:2px 8px;border-radius:20px;margin-top:4px}
+.gen-form{background:#fff;border:1px solid var(--border);border-radius:var(--rxl);padding:24px;box-shadow:var(--shadow)}
+.gen-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.doc-output{background:#fff;border:1px solid var(--border);border-radius:var(--rxl);padding:32px;box-shadow:var(--shadow);font-size:14px;line-height:1.8;color:#0f172a}
+.doc-output h2{font-family:'Source Serif 4',serif;font-size:18px;font-weight:700;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.doc-output h2:first-child{margin-top:0}
+.doc-output h3{font-size:15px;font-weight:700;margin:14px 0 6px}
+.doc-output p{margin-bottom:10px}
+.doc-output ul{margin:8px 0 10px 20px}
+.doc-output li{margin-bottom:4px}
+.doc-upsell-strip{background:linear-gradient(135deg,var(--purple),#6d28d9);border-radius:var(--rl);padding:18px 22px;display:flex;align-items:center;gap:14px;margin-bottom:16px}
+
+@media(max-width:700px){.gen-grid{grid-template-columns:1fr}.doc-type-grid{grid-template-columns:1fr}}
 @media(max-width:700px){.reviews-grid{grid-template-columns:1fr}.trust-bar-inner{gap:12px}.preview-metrics{grid-template-columns:1fr 1fr}}
   .stats-grid,.checks{grid-template-columns:1fr 1fr}
   .steps,.two-col,.plans,.type-cards{grid-template-columns:1fr}
@@ -857,6 +879,7 @@ textarea::placeholder{color:#94a3b8}
       <div class="site-tag-el" id="site-tag" style="display:none"></div>
       <div class="avatar" id="user-av">?</div>
       <button class="btn-ghost btn-sm" onclick="doLogout()">Выйти</button>
+      <button class="btn btn-white btn-sm" onclick="showView('gen-doc')" style="border-color:var(--purple);color:var(--purple)">✨ Создать документ</button>
     </div>
   </div>
 
@@ -1011,6 +1034,147 @@ textarea::placeholder{color:#94a3b8}
     <div class="doc-report-wrap" id="doc-report-content"></div>
   </div>
 
+  <!-- DOCUMENT GENERATOR -->
+  <div id="view-gen-doc" class="app-view">
+    <div class="gen-doc-wrap fade">
+      <div style="margin-bottom:22px">
+        <div style="font-family:'Source Serif 4',serif;font-size:22px;font-weight:700;margin-bottom:6px">Создать юридический документ</div>
+        <div style="font-size:14px;color:var(--slate)">ИИ составит документ под ваш сайт с учётом отрасли и законодательства РФ 2026 года</div>
+      </div>
+
+      <!-- Тип документа -->
+      <div id="gen-step-type">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--slate);margin-bottom:10px">Выберите документ</div>
+        <div class="doc-type-grid">
+          <div class="doc-type-card" onclick="selDocType(this,'offer')">
+            <div class="doc-type-ico">📋</div>
+            <div>
+              <div class="doc-type-name">Публичная оферта</div>
+              <div class="doc-type-desc">Договор с пользователями и клиентами</div>
+              <div class="doc-price-tag">1 500 ₽</div>
+            </div>
+          </div>
+          <div class="doc-type-card" onclick="selDocType(this,'privacy')">
+            <div class="doc-type-ico">🔒</div>
+            <div>
+              <div class="doc-type-name">Политика ПДн</div>
+              <div class="doc-type-desc">Обработка персональных данных по 152-ФЗ</div>
+              <div class="doc-price-tag">1 500 ₽</div>
+            </div>
+          </div>
+          <div class="doc-type-card" onclick="selDocType(this,'cookies')">
+            <div class="doc-type-ico">🍪</div>
+            <div>
+              <div class="doc-type-name">Политика cookies</div>
+              <div class="doc-type-desc">Согласие на использование файлов cookies</div>
+              <div class="doc-price-tag">800 ₽</div>
+            </div>
+          </div>
+          <div class="doc-type-card" onclick="selDocType(this,'terms')">
+            <div class="doc-type-ico">📜</div>
+            <div>
+              <div class="doc-type-name">Пользовательское соглашение</div>
+              <div class="doc-type-desc">Правила использования сервиса</div>
+              <div class="doc-price-tag">1 200 ₽</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Форма данных -->
+        <div class="gen-form" id="gen-form" style="display:none">
+          <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:14px;display:flex;align-items:center;gap:6px">
+            ✨ <span id="gen-doc-label">Публичная оферта</span>
+          </div>
+          <div class="gen-grid">
+            <div class="field-group">
+              <label class="field-lbl">URL сайта <span style="color:var(--red)">*</span></label>
+              <input type="text" id="gen-url" placeholder="https://your-site.ru">
+            </div>
+            <div class="field-group">
+              <label class="field-lbl">Название компании <span style="color:var(--red)">*</span></label>
+              <input type="text" id="gen-company" placeholder="ООО «Компания» или ИП Иванов">
+            </div>
+            <div class="field-group">
+              <label class="field-lbl">ИНН <span style="color:var(--red)">*</span></label>
+              <div style="display:flex;gap:6px">
+                <input type="text" id="gen-inn" placeholder="10 или 12 цифр" maxlength="12" oninput="this.value=this.value.replace(/\D/g,'')">
+                <button class="btn btn-white btn-sm" style="flex-shrink:0" onclick="genAutoFill()">→ из ФНС</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-lbl">Отрасль</label>
+              <select id="gen-industry">
+                <option value="other">Выбрать...</option>
+                <option value="ecommerce">E-commerce / Торговля</option>
+                <option value="education">Образование</option>
+                <option value="medicine">Медицина</option>
+                <option value="finance">Финансы / Fintech</option>
+                <option value="realestate">Недвижимость</option>
+                <option value="it">IT / SaaS</option>
+                <option value="tourism">Туризм</option>
+                <option value="media">Медиа / Реклама</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-lbl">Email для документа</label>
+              <input type="email" id="gen-email" placeholder="info@company.ru">
+            </div>
+            <div class="field-group">
+              <label class="field-lbl">Телефон</label>
+              <input type="tel" id="gen-phone" placeholder="+7 (999) 000-00-00">
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-lbl">Юридический адрес</label>
+            <input type="text" id="gen-address" placeholder="г. Москва, ул. Примерная, д. 1">
+          </div>
+          <div class="field-group">
+            <label class="field-lbl">Краткое описание услуг / продуктов</label>
+            <input type="text" id="gen-services" placeholder="Например: онлайн-курсы по маркетингу">
+          </div>
+          <div id="gen-inn-hint" style="font-size:12px;color:var(--green);margin-bottom:12px;display:none"></div>
+          <div class="err" id="gen-err"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:4px">
+            <div style="font-size:12px;color:var(--slate)">Документ создаётся за 30–60 секунд · Соответствует законодательству РФ 2026</div>
+            <button class="btn btn-blue" id="gen-btn" onclick="startGenDoc()" style="background:var(--purple);box-shadow:0 2px 8px rgba(124,58,237,.3)">✨ Создать документ →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Прогресс -->
+      <div id="gen-scanning" style="display:none">
+        <div class="gen-scan-wrap">
+          <div class="scan-ico" style="background:var(--purple-l)">✨</div>
+          <div class="scan-title">Создаём документ</div>
+          <div class="scan-msg" id="gen-scan-msg">Анализируем данные компании...</div>
+          <div class="progress-track" style="max-width:400px;margin:0 auto">
+            <div class="progress-bar" id="gen-prog" style="background:var(--purple)"></div>
+          </div>
+          <div style="font-size:12px;color:#94a3b8;margin-top:10px">Claude составляет документ с учётом вашей отрасли и законодательства 2026 года</div>
+        </div>
+      </div>
+
+      <!-- Результат -->
+      <div id="gen-result" style="display:none">
+        <div class="doc-upsell-strip">
+          <div style="font-size:28px">✅</div>
+          <div style="flex:1">
+            <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px" id="gen-result-title">Документ готов</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.75)">Проверьте и при необходимости отредактируйте под ваши реквизиты</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-shrink:0">
+            <button class="btn" style="background:#fff;color:var(--purple);font-weight:700;font-size:13px" onclick="downloadDoc()">↓ Скачать</button>
+            <button class="btn" style="background:rgba(255,255,255,.15);color:#fff;font-size:13px" onclick="resetGenDoc()">← Новый документ</button>
+          </div>
+        </div>
+        <div class="doc-output" id="gen-doc-output"></div>
+        <div style="margin-top:14px;padding:14px;background:var(--amber-l);border:1px solid var(--amber-m);border-radius:var(--r);font-size:13px;color:#92400e">
+          ⚠️ Документ создан ИИ на основе предоставленных данных. Рекомендуем проверить его у юриста перед публикацией. <a style="color:var(--amber);font-weight:700;cursor:pointer" onclick="openLeadModal('Проверка сгенерированного документа юристом')">Заказать проверку →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div><!-- pg-app -->
 
 <!-- LEAD MODAL -->
@@ -1069,11 +1233,11 @@ function nav(page) {
 }
 
 function showView(name) {
-  ['view-dash','view-audit0','view-audit1','view-audit2','view-audit3','view-audit4','view-doc-scan','view-doc-report'].forEach(function(v) {
+  ['view-dash','view-audit0','view-audit1','view-audit2','view-audit3','view-audit4','view-doc-scan','view-doc-report','view-gen-doc'].forEach(function(v) {
     document.getElementById(v).classList.remove('show');
   });
   document.getElementById('view-'+name).classList.add('show');
-  var inAudit = name !== 'dash';
+  var inAudit = name !== 'dash' && name !== 'gen-doc';
   document.getElementById('step-bar').style.display = inAudit ? 'flex' : 'none';
 }
 
@@ -1695,7 +1859,158 @@ function declineCookies() { localStorage.setItem('cookies_answered','declined');
 // ══════════════════════════════════
 function setSiteTag(txt) { var el=document.getElementById('site-tag'); el.textContent=txt; el.style.display=txt?'block':'none'; }
 function showErr(id, msg) { var el=document.getElementById(id); el.textContent='⚠ '+msg; el.style.display='block'; }
-function toggleFaq(el) {
+// ══════════════════════════════════
+// DOCUMENT GENERATOR
+// ══════════════════════════════════
+var selectedDocType = '';
+var generatedDocData = null;
+
+var DOC_LABELS = {
+  offer:   'Публичная оферта',
+  privacy: 'Политика обработки персональных данных',
+  cookies: 'Политика использования cookies',
+  terms:   'Пользовательское соглашение'
+};
+
+function selDocType(el, type) {
+  document.querySelectorAll('.doc-type-card').forEach(function(c){ c.classList.remove('sel'); });
+  el.classList.add('sel');
+  selectedDocType = type;
+  document.getElementById('gen-doc-label').textContent = DOC_LABELS[type] || type;
+  document.getElementById('gen-form').style.display = 'block';
+  // Префилл из профиля если есть
+  if (user && user.user_metadata) {
+    var m = user.user_metadata;
+    if (m.company_name && !document.getElementById('gen-company').value) document.getElementById('gen-company').value = m.company_name;
+    if (m.inn && !document.getElementById('gen-inn').value) document.getElementById('gen-inn').value = m.inn;
+    if (m.phone && !document.getElementById('gen-phone').value) document.getElementById('gen-phone').value = m.phone;
+  }
+}
+
+async function genAutoFill() {
+  var inn = document.getElementById('gen-inn').value.trim();
+  if (!inn || (inn.length !== 10 && inn.length !== 12)) return;
+  try {
+    var r = await fetch('/api/company', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ inn }) });
+    var d = await r.json();
+    if (d.found) {
+      if (d.name_short) document.getElementById('gen-company').value = d.name_short;
+      if (d.address) document.getElementById('gen-address').value = d.address;
+      if (d.industry_suggested) document.getElementById('gen-industry').value = d.industry_suggested;
+      var hint = document.getElementById('gen-inn-hint');
+      hint.textContent = '✓ ' + (d.name_full || '') + (d.status_label ? ' · ' + d.status_label : '');
+      hint.style.display = 'block';
+    }
+  } catch(e) {}
+}
+
+async function startGenDoc() {
+  var url     = document.getElementById('gen-url').value.trim();
+  var company = document.getElementById('gen-company').value.trim();
+  var inn     = document.getElementById('gen-inn').value.trim();
+  var errEl   = document.getElementById('gen-err');
+
+  if (!url)     { errEl.textContent = '⚠ Введите URL сайта';        errEl.style.display='block'; return; }
+  if (!company) { errEl.textContent = '⚠ Введите название компании'; errEl.style.display='block'; return; }
+  if (!inn)     { errEl.textContent = '⚠ Введите ИНН';              errEl.style.display='block'; return; }
+  errEl.style.display = 'none';
+
+  document.getElementById('gen-step-type').style.display  = 'none';
+  document.getElementById('gen-scanning').style.display = 'block';
+  document.getElementById('gen-result').style.display   = 'none';
+
+  var prog = document.getElementById('gen-prog');
+  var msg  = document.getElementById('gen-scan-msg');
+  prog.style.width = '5%';
+
+  try {
+    var res = await fetch('/api/generate-doc', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        docType:      selectedDocType,
+        url:          url,
+        company_name: company,
+        inn:          inn,
+        industry:     document.getElementById('gen-industry').value,
+        email:        document.getElementById('gen-email').value.trim(),
+        phone:        document.getElementById('gen-phone').value.trim(),
+        address:      document.getElementById('gen-address').value.trim(),
+        services:     document.getElementById('gen-services').value.trim(),
+        ogrn:         ''
+      })
+    });
+
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+
+    var reader = res.body.getReader(), decoder = new TextDecoder();
+    var result = null, pct = 10, apiErr = null;
+
+    while (true) {
+      var chunk = await reader.read(); if (chunk.done) break;
+      var lines = decoder.decode(chunk.value, { stream:true }).split('\n');
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim(); if (!line.startsWith('data:')) continue;
+        var js = line.slice(5).trim(); if (!js) continue;
+        try {
+          var ev = JSON.parse(js);
+          if (ev.type === 'status') { msg.textContent = ev.message; pct = Math.min(pct+18,90); prog.style.width=pct+'%'; }
+          else if (ev.type === 'done') { result = ev.data; prog.style.width='100%'; msg.textContent='Готово!'; }
+          else if (ev.type === 'error') { apiErr = ev.message; }
+        } catch(pe) {}
+      }
+    }
+
+    if (apiErr) throw new Error(apiErr);
+    if (!result) throw new Error('Не получили ответ от сервера');
+
+    generatedDocData = result;
+    document.getElementById('gen-scanning').style.display = 'none';
+    document.getElementById('gen-result').style.display   = 'block';
+    document.getElementById('gen-result-title').textContent = (DOC_LABELS[selectedDocType] || 'Документ') + ' готов';
+    document.getElementById('gen-doc-output').innerHTML = result.html || '';
+
+  } catch(e) {
+    document.getElementById('gen-scanning').style.display = 'none';
+    document.getElementById('gen-step-type').style.display = 'block';
+    document.getElementById('gen-err').textContent = '⚠ ' + e.message;
+    document.getElementById('gen-err').style.display = 'block';
+  }
+}
+
+function resetGenDoc() {
+  selectedDocType = ''; generatedDocData = null;
+  document.querySelectorAll('.doc-type-card').forEach(function(c){ c.classList.remove('sel'); });
+  document.getElementById('gen-form').style.display   = 'none';
+  document.getElementById('gen-scanning').style.display = 'none';
+  document.getElementById('gen-result').style.display  = 'none';
+  document.getElementById('gen-step-type').style.display = 'block';
+  document.getElementById('gen-err').style.display = 'none';
+  document.getElementById('gen-inn-hint').style.display = 'none';
+}
+
+function downloadDoc() {
+  if (!generatedDocData) return;
+  var label = DOC_LABELS[generatedDocData.docType] || 'Документ';
+  var html = '<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>' + label + '</title>' +
+    '<style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;padding:20px;font-size:14px;line-height:1.8;color:#111}' +
+    'h1{font-size:22px;margin-bottom:4px}h2{font-size:17px;margin:20px 0 8px;padding-bottom:4px;border-bottom:1px solid #e0e0e0}' +
+    'h3{font-size:15px;margin:14px 0 6px}p{margin-bottom:10px}ul{margin:8px 0 10px 20px}li{margin-bottom:4px}' +
+    '.cover{text-align:center;padding:20px 0 24px;border-bottom:2px solid #2563eb;margin-bottom:24px}' +
+    '.cover h1{color:#2563eb}.meta{font-size:12px;color:#666;margin-top:6px}</style></head><body>' +
+    '<div class="cover"><h1>' + label + '</h1>' +
+    '<div class="meta">' + esc(generatedDocData.company_name || '') + ' · ' + esc(generatedDocData.url || '') +
+    ' · Дата: ' + esc(generatedDocData.generated_at || '') + '</div>' +
+    '<div class="meta" style="color:#dc2626;font-size:11px;margin-top:4px">Документ создан ИИ-системой. Рекомендуем проверку у юриста.</div></div>' +
+    (generatedDocData.html || '') + '</body></html>';
+  var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = label.replace(/\s+/g,'-') + '.html';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+
   var arrow = el.querySelector('.faq-arrow');
   var ans   = el.nextElementSibling;
   var isOpen = ans.classList.contains('open');
