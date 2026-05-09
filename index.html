@@ -2010,7 +2010,7 @@ function downloadDoc() {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
-
+function toggleFaq(el) {
   var arrow = el.querySelector('.faq-arrow');
   var ans   = el.nextElementSibling;
   var isOpen = ans.classList.contains('open');
