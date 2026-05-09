@@ -654,6 +654,21 @@ textarea::placeholder{color:#94a3b8}
       <div class="or-divider">или</div>
       <div class="field-group"><label class="field-lbl">Email</label><input type="email" id="a-email" placeholder="you@company.ru" onkeydown="if(event.key==='Enter')doAuth()"></div>
       <div class="field-group"><label class="field-lbl">Пароль</label><input type="password" id="a-pass" placeholder="Минимум 6 символов" onkeydown="if(event.key==='Enter')doAuth()"></div>
+
+      <!-- Поля только для регистрации -->
+      <div id="reg-fields" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="field-group"><label class="field-lbl">Имя</label><input type="text" id="a-name" placeholder="Ваше имя"></div>
+          <div class="field-group"><label class="field-lbl">Телефон</label><input type="tel" id="a-phone" placeholder="+7 (999) 000-00-00"></div>
+        </div>
+        <div class="field-group"><label class="field-lbl">Название компании</label><input type="text" id="a-company" placeholder="ООО «Компания» или ИП Иванов"></div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <div class="field-group" style="flex:1;margin-bottom:0"><label class="field-lbl">ИНН компании</label><input type="text" id="a-inn" placeholder="10 или 12 цифр" maxlength="12" oninput="this.value=this.value.replace(/\D/g,'')"></div>
+          <button class="btn btn-white btn-sm" style="height:38px;flex-shrink:0;margin-bottom:0" onclick="autoFillCompany()" id="inn-check-btn">Проверить →</button>
+        </div>
+        <div id="inn-hint" style="font-size:11px;color:var(--green);margin:4px 0 10px;display:none"></div>
+      </div>
+
       <div class="check-row" id="consent-row" style="display:none">
         <input type="checkbox" id="consent-pd" required>
         <label for="consent-pd">Я принимаю <a onclick="showModal('offer')">условия оферты</a> и даю согласие на <a onclick="showModal('pd')">обработку персональных данных</a></label>
@@ -938,10 +953,11 @@ sb.auth.onAuthStateChange(function(ev, session) {
 function toggleAuth() {
   isReg = !isReg;
   document.getElementById('auth-title').textContent = isReg ? 'Создать аккаунт' : 'Добро пожаловать';
-  document.getElementById('auth-sub').textContent = isReg ? 'Регистрация займёт 30 секунд' : 'Войдите чтобы начать аудит';
+  document.getElementById('auth-sub').textContent = isReg ? 'Заполните данные — займёт 1 минуту' : 'Войдите чтобы начать аудит';
   document.getElementById('auth-btn').textContent = isReg ? 'Зарегистрироваться' : 'Войти';
   document.getElementById('auth-sw1').textContent = isReg ? 'Уже есть аккаунт?' : 'Нет аккаунта?';
   document.getElementById('auth-sw2').textContent = isReg ? 'Войти' : 'Зарегистрироваться';
+  document.getElementById('reg-fields').style.display = isReg ? 'block' : 'none';
   document.getElementById('consent-row').style.display = isReg ? 'flex' : 'none';
   document.getElementById('marketing-row').style.display = isReg ? 'flex' : 'none';
   document.getElementById('auth-msg').style.display = 'none';
@@ -949,17 +965,59 @@ function toggleAuth() {
 
 async function doAuth() {
   var email = document.getElementById('a-email').value.trim();
-  var pass = document.getElementById('a-pass').value;
+  var pass  = document.getElementById('a-pass').value;
   if (!email || !pass) { showAuthMsg('Введите email и пароль', 'err'); return; }
   if (isReg && !document.getElementById('consent-pd').checked) { showAuthMsg('Необходимо согласие на обработку персональных данных', 'err'); return; }
   var btn = document.getElementById('auth-btn');
   btn.disabled = true; btn.textContent = '...';
   try {
-    var r = isReg ? await sb.auth.signUp({email, password:pass}) : await sb.auth.signInWithPassword({email, password:pass});
-    if (r.error) showAuthMsg(r.error.message, 'err');
-    else if (isReg && !r.data.session) showAuthMsg('Проверьте почту — отправили письмо подтверждения', 'ok');
+    if (isReg) {
+      var name    = document.getElementById('a-name').value.trim();
+      var phone   = document.getElementById('a-phone').value.trim();
+      var company = document.getElementById('a-company').value.trim();
+      var inn     = document.getElementById('a-inn').value.trim();
+      var marketing = document.getElementById('consent-marketing').checked;
+      var r = await sb.auth.signUp({ email, password: pass, options: {
+        data: { full_name: name, phone, company_name: company, inn, marketing_consent: marketing }
+      }});
+      if (r.error) { showAuthMsg(r.error.message, 'err'); }
+      else {
+        // Сохраняем в таблицу profiles
+        if (r.data && r.data.user) {
+          try {
+            await fetch('/api/profile', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ user_id: r.data.user.id, email, name, phone, company_name: company, inn, marketing_consent: marketing })
+            });
+          } catch(pe) { console.log('Profile save skipped:', pe.message); }
+        }
+        if (!r.data.session) showAuthMsg('Проверьте почту — отправили письмо подтверждения', 'ok');
+      }
+    } else {
+      var r = await sb.auth.signInWithPassword({ email, password: pass });
+      if (r.error) showAuthMsg(r.error.message, 'err');
+    }
   } catch(e) { showAuthMsg(e.message, 'err'); }
   btn.disabled = false; btn.textContent = isReg ? 'Зарегистрироваться' : 'Войти';
+}
+
+async function autoFillCompany() {
+  var inn = document.getElementById('a-inn').value.trim();
+  if (!inn || (inn.length !== 10 && inn.length !== 12)) return;
+  var btn = document.getElementById('inn-check-btn');
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    var r = await fetch('/api/company', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ inn }) });
+    var d = await r.json();
+    if (d.found && d.name_short) {
+      document.getElementById('a-company').value = d.name_short;
+      var hint = document.getElementById('inn-hint');
+      hint.textContent = '✓ ' + d.name_full + (d.status_label ? ' · ' + d.status_label : '') + (d.address ? ' · ' + d.address.substring(0,60) : '');
+      hint.style.display = 'block';
+    }
+  } catch(e) {}
+  btn.disabled = false; btn.textContent = 'Проверить →';
 }
 async function loginGoogle() { await sb.auth.signInWithOAuth({provider:'google', options:{redirectTo:window.location.origin}}); }
 async function doLogout() { await sb.auth.signOut(); }
