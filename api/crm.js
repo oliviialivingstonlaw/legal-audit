@@ -51,7 +51,10 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    if (type === 'leads') {
+    if (type === 'profiles') {
+      var r = await fetch(sb + '/rest/v1/profiles?select=*&order=created_at.desc&limit=500', { headers });
+      return res.json(await r.json());
+    }
       var status = q.status ? '&status=eq.' + q.status : '';
       var r = await fetch(sb + '/rest/v1/leads?select=*&order=created_at.desc&limit=200' + status, { headers });
       return res.json(await r.json());
