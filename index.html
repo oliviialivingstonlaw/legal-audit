@@ -1324,17 +1324,29 @@ async function autoFillCompany() {
   var inn = document.getElementById('a-inn').value.trim();
   if (!inn || (inn.length !== 10 && inn.length !== 12)) return;
   var btn = document.getElementById('inn-check-btn');
+  var hint = document.getElementById('inn-hint');
   btn.disabled = true; btn.textContent = '...';
+  hint.style.display = 'none';
   try {
     var r = await fetch('/api/company', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ inn }) });
     var d = await r.json();
-    if (d.found && d.name_short) {
+    if (d.error && d.error.includes('not configured')) {
+      hint.style.color = 'var(--amber)';
+      hint.textContent = '⚠ Для автозаполнения добавьте DADATA_API_KEY в Vercel';
+    } else if (d.found && d.name_short) {
       document.getElementById('a-company').value = d.name_short;
-      var hint = document.getElementById('inn-hint');
-      hint.textContent = '✓ ' + d.name_full + (d.status_label ? ' · ' + d.status_label : '') + (d.address ? ' · ' + d.address.substring(0,60) : '');
-      hint.style.display = 'block';
+      hint.style.color = 'var(--green)';
+      hint.textContent = '✓ ' + (d.name_full||'') + (d.status_label ? ' · ' + d.status_label : '') + (d.address ? ' · ' + d.address.substring(0,60) : '');
+    } else {
+      hint.style.color = 'var(--amber)';
+      hint.textContent = '⚠ Компания с ИНН ' + inn + ' не найдена';
     }
-  } catch(e) {}
+    hint.style.display = 'block';
+  } catch(e) {
+    hint.style.color = 'var(--red)';
+    hint.textContent = '⚠ Ошибка: ' + e.message;
+    hint.style.display = 'block';
+  }
   btn.disabled = false; btn.textContent = 'Проверить →';
 }
 async function loginGoogle() { await sb.auth.signInWithOAuth({provider:'google', options:{redirectTo:window.location.origin}}); }
