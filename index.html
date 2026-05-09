@@ -658,8 +658,8 @@ textarea::placeholder{color:#94a3b8}
       <!-- Поля только для регистрации -->
       <div id="reg-fields" style="display:none">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div class="field-group"><label class="field-lbl">Имя</label><input type="text" id="a-name" placeholder="Ваше имя"></div>
-          <div class="field-group"><label class="field-lbl">Телефон</label><input type="tel" id="a-phone" placeholder="+7 (999) 000-00-00"></div>
+          <div class="field-group"><label class="field-lbl">Имя <span style="color:var(--red)">*</span></label><input type="text" id="a-name" placeholder="Ваше имя" required></div>
+          <div class="field-group"><label class="field-lbl">Телефон <span style="color:var(--red)">*</span></label><input type="tel" id="a-phone" placeholder="+7 (999) 000-00-00" required></div>
         </div>
         <div class="field-group"><label class="field-lbl">Название компании</label><input type="text" id="a-company" placeholder="ООО «Компания» или ИП Иванов"></div>
         <div style="display:flex;gap:8px;align-items:flex-end">
@@ -977,6 +977,8 @@ async function doAuth() {
       var company = document.getElementById('a-company').value.trim();
       var inn     = document.getElementById('a-inn').value.trim();
       var marketing = document.getElementById('consent-marketing').checked;
+      if (!name) { showAuthMsg('Введите ваше имя', 'err'); btn.disabled=false; btn.textContent='Зарегистрироваться'; return; }
+      if (!phone) { showAuthMsg('Введите номер телефона', 'err'); btn.disabled=false; btn.textContent='Зарегистрироваться'; return; }
       var r = await sb.auth.signUp({ email, password: pass, options: {
         data: { full_name: name, phone, company_name: company, inn, marketing_consent: marketing }
       }});
