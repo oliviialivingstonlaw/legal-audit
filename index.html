@@ -837,7 +837,7 @@ textarea::placeholder{color:#94a3b8}
         </div>
         <div class="field-group"><label class="field-lbl">Название компании</label><input type="text" id="a-company" placeholder="ООО «Компания» или ИП Иванов"></div>
         <div style="display:flex;gap:8px;align-items:flex-end">
-          <div class="field-group" style="flex:1;margin-bottom:0"><label class="field-lbl">ИНН компании</label><input type="text" id="a-inn" placeholder="10 или 12 цифр" maxlength="12" oninput="this.value=this.value.replace(/\D/g,'')"></div>
+          <div class="field-group" style="flex:1;margin-bottom:0"><label class="field-lbl">ИНН компании</label><input type="text" id="a-inn" placeholder="10 или 12 цифр" maxlength="12" oninput="this.value=this.value.replace(/\D/g,'');if(this.value.length===10||this.value.length===12)autoFillCompany()"></div>
           <button class="btn btn-white btn-sm" style="height:38px;flex-shrink:0;margin-bottom:0" onclick="autoFillCompany()" id="inn-check-btn">Проверить →</button>
         </div>
         <div id="inn-hint" style="font-size:11px;color:var(--green);margin:4px 0 10px;display:none"></div>
@@ -1097,7 +1097,7 @@ textarea::placeholder{color:#94a3b8}
             <div class="field-group">
               <label class="field-lbl">ИНН <span style="color:var(--red)">*</span></label>
               <div style="display:flex;gap:6px">
-                <input type="text" id="gen-inn" placeholder="10 или 12 цифр" maxlength="12" oninput="this.value=this.value.replace(/\D/g,'')">
+                <input type="text" id="gen-inn" placeholder="10 или 12 цифр" maxlength="12" oninput="this.value=this.value.replace(/\D/g,'');if(this.value.length===10||this.value.length===12)genAutoFill()">
                 <button class="btn btn-white btn-sm" style="flex-shrink:0" onclick="genAutoFill()">→ из ФНС</button>
               </div>
             </div>
