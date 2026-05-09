@@ -1931,10 +1931,10 @@ async function genAutoFill() {
       if (d.name_short) filled.push('название');
       if (d.address)    filled.push('адрес');
       if (d.industry_suggested && d.industry_suggested !== 'other') filled.push('отрасль');
-      hint.style.color = 'var(--green)';
-      hint.textContent = '✓ ' + (d.name_full || d.name_short || inn) +
-        (d.status_label ? ' · ' + d.status_label : '') +
-        (filled.length ? ' · Заполнено: ' + filled.join(', ') : '');
+      hint.style.color = filled.length ? 'var(--green)' : 'var(--amber)';
+      hint.textContent = filled.length
+        ? '✓ ' + (d.name_full || d.name_short || inn) + (d.status_label ? ' · ' + d.status_label : '') + ' · Заполнено: ' + filled.join(', ')
+        : '⚠ ИНН найден, но данные недоступны — активируйте «Подсказки» на dadata.ru → Профиль → Подписка и цены';
     } else {
       hint.style.color = 'var(--amber)';
       hint.textContent = '⚠ Компания с ИНН ' + inn + ' не найдена в реестре';
